@@ -10,6 +10,7 @@ export default function GitHubActivity() {
   const [refreshKey, setRefreshKey] = useState(0);
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- one-time mount flag, avoids SSR/client hydration mismatch
     setMounted(true);
     // re-fetch every 5 minutes so new pushes show up without a page reload
     const interval = setInterval(() => setRefreshKey((k) => k + 1), 5 * 60 * 1000);
@@ -20,7 +21,7 @@ export default function GitHubActivity() {
     <section className="py-24 px-6 bg-zinc-50 dark:bg-zinc-950" id="github">
       <div className="max-w-4xl mx-auto">
         <div className="text-center mb-12">
-          <p className="text-xs font-semibold tracking-widest uppercase text-yellow-500 dark:text-yellow-400 mb-3">
+          <p className="text-xs font-semibold tracking-widest uppercase text-amber-700 dark:text-yellow-400 mb-3">
             Open Source
           </p>
           <h2 className="text-3xl md:text-4xl font-bold mb-4">

@@ -112,13 +112,13 @@ export default async function ProjectPage({ params }) {
             prose-li:text-zinc-600 dark:prose-li:text-zinc-400 prose-li:text-sm
             prose-ul:my-3 prose-ol:my-3
             prose-code:bg-zinc-100 dark:prose-code:bg-zinc-800
-            prose-code:text-yellow-600 dark:prose-code:text-yellow-400
+            prose-code:text-amber-700 dark:prose-code:text-yellow-400
             prose-code:px-1.5 prose-code:py-0.5 prose-code:rounded prose-code:text-xs prose-code:font-mono
             prose-code:before:content-none prose-code:after:content-none
             prose-pre:bg-zinc-950 prose-pre:border prose-pre:border-zinc-800
             prose-pre:rounded-xl prose-pre:p-5 prose-pre:my-6 prose-pre:overflow-x-auto
             prose-pre:text-zinc-300 prose-pre:text-xs
-            prose-a:text-yellow-500 hover:prose-a:text-yellow-400 prose-a:no-underline hover:prose-a:underline
+            prose-a:text-amber-700 dark:prose-a:text-yellow-400 hover:prose-a:text-amber-800 dark:hover:prose-a:text-yellow-300 prose-a:no-underline hover:prose-a:underline
             prose-strong:text-zinc-800 dark:prose-strong:text-zinc-100 prose-strong:font-semibold
             prose-hr:border-zinc-200 dark:prose-hr:border-zinc-800
             prose-table:w-full prose-table:text-sm prose-table:border-collapse

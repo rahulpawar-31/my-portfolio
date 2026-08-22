@@ -12,6 +12,7 @@ export default function Navbar() {
   const [activeSection, setActiveSection] = useState("");
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- one-time mount flag, avoids SSR/client hydration mismatch
     setMounted(true);
 
     const onScroll = () => setScrolled(window.scrollY > 20);

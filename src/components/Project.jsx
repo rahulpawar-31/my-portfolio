@@ -1,5 +1,4 @@
 import { prisma } from "@/lib/prisma";
-import { motion } from "framer-motion";
 import Link from "next/link";
 
 export default async function Projects() {
@@ -11,13 +10,13 @@ export default async function Projects() {
     <section className="py-24 px-6 bg-white dark:bg-black" id="projects">
       <div className="max-w-6xl mx-auto">
         <div className="text-center mb-16">
-          <p className="text-xs font-semibold tracking-widest uppercase text-yellow-500 dark:text-yellow-400 mb-3">
+          <p className="text-xs font-semibold tracking-widest uppercase text-amber-700 dark:text-yellow-400 mb-3">
             What I&apos;ve built
           </p>
           <h2 className="text-3xl md:text-4xl font-bold">My Projects</h2>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {projects.map((project, index) => (
+          {projects.map((project) => (
             <div
               key={project.slug}
               className="group rounded-2xl overflow-hidden border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 hover:shadow-xl hover:border-zinc-300 dark:hover:border-zinc-700 transition-all duration-300"
@@ -25,7 +24,7 @@ export default async function Projects() {
               <div className={`h-1 w-full bg-gradient-to-r ${project.gradient}`} />
               <div className="p-6">
                 <div className="flex items-start justify-between mb-3">
-                  <h3 className="text-lg font-bold group-hover:text-yellow-500 dark:group-hover:text-yellow-400 transition-colors">
+                  <h3 className="text-lg font-bold group-hover:text-amber-700 dark:group-hover:text-yellow-400 transition-colors">
                     {project.name}
                   </h3>
                   <div className="flex items-center gap-1.5 shrink-0 ml-2">

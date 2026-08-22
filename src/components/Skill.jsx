@@ -30,7 +30,7 @@ export default function Skills() {
           viewport={{ once: true }}
           transition={{ duration: 0.6 }}
         >
-          <p className="text-xs font-semibold tracking-widest uppercase text-yellow-500 dark:text-yellow-400 mb-3">
+          <p className="text-xs font-semibold tracking-widest uppercase text-amber-700 dark:text-yellow-400 mb-3">
             What I work with
           </p>
           <h2 className="text-3xl md:text-4xl font-bold">My Skills</h2>
@@ -56,7 +56,7 @@ export default function Skills() {
                 {group.skills.map((skill, si) => (
                   <motion.span
                     key={skill}
-                    className="px-3 py-1.5 text-sm font-medium rounded-lg bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 hover:bg-yellow-50 dark:hover:bg-yellow-400/10 hover:text-yellow-600 dark:hover:text-yellow-400 transition-colors cursor-default"
+                    className="px-3 py-1.5 text-sm font-medium rounded-lg bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 hover:bg-yellow-50 dark:hover:bg-yellow-400/10 hover:text-amber-700 dark:hover:text-yellow-400 transition-colors cursor-default"
                     initial={{ opacity: 0, scale: 0.8 }}
                     whileInView={{ opacity: 1, scale: 1 }}
                     viewport={{ once: true }}

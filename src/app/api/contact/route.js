@@ -2,6 +2,27 @@ import { Resend } from "resend";
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 
+const RATE_LIMIT_WINDOW_MS = 60_000;
+const RATE_LIMIT_MAX_REQUESTS = 3;
+const requestLog = new Map();
+
+function isRateLimited(ip) {
+  const now = Date.now();
+  const timestamps = (requestLog.get(ip) || []).filter(
+    (t) => now - t < RATE_LIMIT_WINDOW_MS
+  );
+  timestamps.push(now);
+  requestLog.set(ip, timestamps);
+
+  if (requestLog.size > 5000) {
+    for (const [key, value] of requestLog) {
+      if (!value.some((t) => now - t < RATE_LIMIT_WINDOW_MS)) requestLog.delete(key);
+    }
+  }
+
+  return timestamps.length > RATE_LIMIT_MAX_REQUESTS;
+}
+
 export async function POST(req) {
   if (!process.env.RESEND_API_KEY) {
     return NextResponse.json({ error: "Server configuration error." }, { status: 500 });
@@ -10,11 +31,24 @@ export async function POST(req) {
     return NextResponse.json({ error: "Server configuration error." }, { status: 500 });
   }
 
+  const ip = req.headers.get("x-forwarded-for")?.split(",")[0].trim() || "unknown";
+  if (isRateLimited(ip)) {
+    return NextResponse.json(
+      { error: "Too many requests. Please try again in a minute." },
+      { status: 429 }
+    );
+  }
+
   const resend = new Resend(process.env.RESEND_API_KEY);
 
   try {
     const body = await req.json();
-    const { name, email, message } = body;
+    const { name, email, message, company } = body;
+
+    // Honeypot — real visitors never fill this hidden field, bots that auto-fill forms do.
+    if (company) {
+      return NextResponse.json({ success: true, message: "Message sent successfully!" }, { status: 200 });
+    }
 
     if (!name || !email || !message) {
       return NextResponse.json({ error: "All fields are required" }, { status: 400 });

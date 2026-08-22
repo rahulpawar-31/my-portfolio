@@ -2,7 +2,7 @@
 
 A production-ready full stack developer portfolio built with Next.js, PostgreSQL and Vercel.
 
-**Live:** https://my-portfolio-pearl-eight-ki13whxvso.vercel.app
+**Live:** https://portfolio.rahulcodes.qd.je
 
 ---
 
@@ -107,12 +107,18 @@ npm run dev
 
 ## CI/CD Pipeline
 ```
-dev branch → npm run build → git push → PR to main → merge → Vercel auto-deploys
+dev branch → npm run build → git push → PR to main → merge → lint + build check → deploy
 ```
 
 - Main branch is protected — no direct pushes allowed
 - Every change goes through a Pull Request
-- Vercel runs postinstall (prisma generate) + next build automatically on merge
+- On merge, GitHub Actions lints and builds the app on every branch push
+
+### Deployment — source of truth
+
+**Production: the VPS** at `portfolio.rahulcodes.qd.je`, deployed via the `deploy-vps.yml` GitHub Actions workflow (manual trigger on `main`).
+
+Vercel auto-deploys on every push to `main` as a **staging/backup** copy — useful for previewing changes, not the canonical URL. All metadata, sitemap, and OG tags point at the VPS domain.
 
 ---
 
