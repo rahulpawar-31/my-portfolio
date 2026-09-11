@@ -49,7 +49,7 @@ export default function Skills() {
                 {group.skills.map((skill, si) => (
                   <motion.span
                     key={skill}
-                    className="px-3 py-1.5 text-sm font-medium rounded-lg bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 hover:bg-yellow-50 dark:hover:bg-yellow-400/10 hover:text-yellow-600 dark:hover:text-yellow-400 transition-colors cursor-default"
+                    className="px-3 py-1.5 text-sm font-medium rounded-lg bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 hover:bg-yellow-50 dark:hover:bg-yellow-400/10 hover:text-amber-700 dark:hover:text-yellow-400 transition-colors cursor-default"
                     {...fadeInScaleOnScroll(gi * 0.15 + si * 0.05)}
                   >
                     {skill}

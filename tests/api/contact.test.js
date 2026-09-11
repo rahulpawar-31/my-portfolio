@@ -98,6 +98,18 @@ describe("POST /api/contact", () => {
     }
   );
 
+  it("pretends to succeed but drops the message when the honeypot is filled", async () => {
+    const res = await POST(request({ ...validBody, company: "Acme Inc" }));
+
+    expect(res.status).toBe(200);
+    await expect(res.json()).resolves.toEqual({
+      success: true,
+      message: "Message sent successfully!",
+    });
+    expect(createMessage).not.toHaveBeenCalled();
+    expect(sendEmail).not.toHaveBeenCalled();
+  });
+
   it("saves a sanitized message and sends the email", async () => {
     const res = await POST(
       request({
