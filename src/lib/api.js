@@ -5,6 +5,10 @@ export function jsonError(message, status) {
   return NextResponse.json({ error: message }, { status });
 }
 
+export function jsonSuccess(message, status = 200) {
+  return NextResponse.json({ success: true, message }, { status });
+}
+
 export function handleApiError(error, logMessage, responseMessage, status = 500) {
   console.error(logMessage, error);
   return jsonError(responseMessage, status);

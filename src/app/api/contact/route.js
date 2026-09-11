@@ -1,7 +1,6 @@
 import { Resend } from "resend";
-import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { jsonError, handleApiError } from "@/lib/api";
+import { jsonError, jsonSuccess, handleApiError } from "@/lib/api";
 import { clientIp, createRateLimiter } from "@/lib/rateLimit";
 
 const MAX_BODY_BYTES = 10 * 1024;
@@ -66,10 +65,7 @@ export async function POST(req) {
 
     // Honeypot — real visitors never fill this hidden field, bots that auto-fill forms do.
     if (company) {
-      return NextResponse.json(
-        { success: true, message: "Message sent successfully!" },
-        { status: 200 }
-      );
+      return jsonSuccess("Message sent successfully!");
     }
 
     if (
@@ -139,24 +135,15 @@ export async function POST(req) {
       }));
     } catch (err) {
       console.error("Contact API: Resend request failed:", err);
-      return NextResponse.json(
-        { success: true, message: "Message saved! Email delivery may be delayed." },
-        { status: 200 }
-      );
+      return jsonSuccess("Message saved! Email delivery may be delayed.");
     }
 
     if (error) {
       console.error("Contact API: Resend rejected the email:", error);
-      return NextResponse.json(
-        { success: true, message: "Message saved! Email delivery may be delayed." },
-        { status: 200 }
-      );
+      return jsonSuccess("Message saved! Email delivery may be delayed.");
     }
 
-    return NextResponse.json(
-      { success: true, message: "Message sent successfully!" },
-      { status: 200 }
-    );
+    return jsonSuccess("Message sent successfully!");
 
   } catch (err) {
     return handleApiError(err, "Contact API error:", "Something went wrong.", 500);
