@@ -1,6 +1,7 @@
 import { Resend } from "resend";
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { jsonError, handleApiError } from "@/lib/api";
 import { clientIp, createRateLimiter } from "@/lib/rateLimit";
 
 const MAX_BODY_BYTES = 10 * 1024;
@@ -26,28 +27,25 @@ function escapeHtml(value) {
 export async function POST(req) {
   if (!process.env.RESEND_API_KEY) {
     console.error("Contact API: RESEND_API_KEY is not set");
-    return NextResponse.json({ error: "Server configuration error." }, { status: 500 });
+    return jsonError("Server configuration error.", 500);
   }
   if (!process.env.CONTACT_EMAIL) {
     console.error("Contact API: CONTACT_EMAIL is not set");
-    return NextResponse.json({ error: "Server configuration error." }, { status: 500 });
+    return jsonError("Server configuration error.", 500);
   }
 
   const contentType = req.headers.get("content-type") ?? "";
   if (!contentType.includes("application/json")) {
-    return NextResponse.json({ error: "Unsupported content type" }, { status: 415 });
+    return jsonError("Unsupported content type", 415);
   }
 
   if (Number(req.headers.get("content-length") ?? 0) > MAX_BODY_BYTES) {
-    return NextResponse.json({ error: "Payload too large" }, { status: 413 });
+    return jsonError("Payload too large", 413);
   }
 
   const ip = clientIp(req);
   if (limiter.isOverLimit(ip)) {
-    return NextResponse.json(
-      { error: "Too many messages. Please try again later." },
-      { status: 429 }
-    );
+    return jsonError("Too many messages. Please try again later.", 429);
   }
 
   const resend = new Resend(process.env.RESEND_API_KEY);
@@ -56,12 +54,11 @@ export async function POST(req) {
   try {
     const raw = await req.text();
     if (raw.length > MAX_BODY_BYTES) {
-      return NextResponse.json({ error: "Payload too large" }, { status: 413 });
+      return jsonError("Payload too large", 413);
     }
     body = JSON.parse(raw);
   } catch (err) {
-    console.error("Contact API: invalid JSON body:", err);
-    return NextResponse.json({ error: "Invalid request body" }, { status: 400 });
+    return handleApiError(err, "Contact API: invalid JSON body:", "Invalid request body", 400);
   }
 
   try {
@@ -72,7 +69,7 @@ export async function POST(req) {
       typeof email !== "string" ||
       typeof message !== "string"
     ) {
-      return NextResponse.json({ error: "All fields are required" }, { status: 400 });
+      return jsonError("All fields are required", 400);
     }
 
     const safeName = name
@@ -83,12 +80,12 @@ export async function POST(req) {
     const safeMessage = message.replace(/<[^>]*>/g, "").trim().slice(0, MESSAGE_MAX);
 
     if (!safeName || !email || !safeMessage) {
-      return NextResponse.json({ error: "All fields are required" }, { status: 400 });
+      return jsonError("All fields are required", 400);
     }
 
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) {
-      return NextResponse.json({ error: "Please enter a valid email address" }, { status: 400 });
+      return jsonError("Please enter a valid email address", 400);
     }
 
     const safeEmail = email.slice(0, EMAIL_MAX);
@@ -104,10 +101,11 @@ export async function POST(req) {
         },
       });
     } catch (err) {
-      console.error("Contact API: failed to save message to the database:", err);
-      return NextResponse.json(
-        { error: "Could not save your message. Please try again later." },
-        { status: 500 }
+      return handleApiError(
+        err,
+        "Contact API: failed to save message to the database:",
+        "Could not save your message. Please try again later.",
+        500
       );
     }
 
@@ -153,7 +151,6 @@ export async function POST(req) {
     );
 
   } catch (err) {
-    console.error("Contact API error:", err);
-    return NextResponse.json({ error: "Something went wrong." }, { status: 500 });
+    return handleApiError(err, "Contact API error:", "Something went wrong.", 500);
   }
 }

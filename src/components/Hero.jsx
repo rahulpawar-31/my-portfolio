@@ -1,6 +1,9 @@
 "use client";
 import { motion } from "framer-motion";
 import { useEffect, useState } from "react";
+import { fadeIn, fadeInUp } from "@/lib/motion";
+import { externalLinkProps, resumeUrl } from "@/lib/site";
+import { useMounted } from "@/hooks/useMounted";
 
 const roles = ["a Developer 💻", "a Next.js Learner 🚀", "a Problem Solver 🧠", "a Builder ⚡"];
 
@@ -11,12 +14,10 @@ const stats = [
 ];
 
 export default function Hero() {
-  const [mounted, setMounted] = useState(false);
+  const mounted = useMounted();
   const [currentRole, setCurrentRole] = useState(0);
   const [displayed, setDisplayed] = useState("");
   const [isDeleting, setIsDeleting] = useState(false);
-
-  useEffect(() => { setMounted(true); }, []);
 
   useEffect(() => {
     if (!mounted) return;
@@ -46,9 +47,7 @@ export default function Hero() {
 
       <motion.div
         className="mb-6 inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 text-xs text-zinc-500 dark:text-zinc-400 font-medium shadow-sm"
-        initial={{ opacity: 0, y: -10 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5 }}
+        {...fadeInUp(0, 0.5, -10)}
       >
         <span className="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse" />
         Open to work
@@ -56,9 +55,7 @@ export default function Hero() {
 
       <motion.h1
         className="text-5xl md:text-7xl font-bold leading-tight tracking-tight"
-        initial={{ opacity: 0, y: -30 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.7, delay: 0.1 }}
+        {...fadeInUp(0.1, 0.7, -30)}
       >
         Hi, I&apos;m{" "}
         <span className="relative inline-block">
@@ -70,9 +67,7 @@ export default function Hero() {
 
       <motion.div
         className="mt-5 h-10 flex items-center justify-center text-2xl md:text-3xl font-semibold text-zinc-600 dark:text-zinc-300"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 0.4, duration: 0.6 }}
+        {...fadeIn(0.4)}
       >
         {mounted ? (
           <>
@@ -87,9 +82,7 @@ export default function Hero() {
 
       <motion.p
         className="mt-6 text-base md:text-lg text-zinc-500 dark:text-zinc-400 max-w-xl leading-relaxed"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 0.6, duration: 0.7 }}
+        {...fadeIn(0.6, 0.7)}
       >
         I build clean, fast and functional web applications using modern technologies.
         Passionate about great user experiences.
@@ -97,17 +90,13 @@ export default function Hero() {
 
       <motion.div
         className="mt-8 flex flex-wrap justify-center gap-4"
-        initial={{ opacity: 0, y: 10 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.75, duration: 0.6 }}
+        {...fadeInUp(0.75, 0.6, 10)}
       >
         {stats.map((stat, i) => (
           <motion.div
             key={stat.label}
             className="flex flex-col items-center px-5 py-3 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 shadow-sm min-w-[100px]"
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.8 + i * 0.1, duration: 0.4 }}
+            {...fadeInUp(0.8 + i * 0.1, 0.4, 10)}
           >
             <span className="text-lg font-bold text-yellow-500 dark:text-yellow-400">{stat.value}</span>
             <span className="text-xs text-zinc-500 dark:text-zinc-400 mt-0.5">{stat.label}</span>
@@ -117,9 +106,7 @@ export default function Hero() {
 
       <motion.div
         className="mt-8 flex flex-wrap justify-center gap-3"
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 1, duration: 0.6 }}
+        {...fadeInUp(1)}
       >
         <button
           onClick={() => document.getElementById("projects")?.scrollIntoView({ behavior: "smooth" })}
@@ -133,16 +120,14 @@ export default function Hero() {
         >
           Contact Me
         </button>
-        <a href="/resume.pdf" target="_blank" rel="noopener noreferrer" className="px-7 py-3 border border-zinc-300 dark:border-zinc-600 text-sm font-semibold rounded-lg hover:bg-zinc-50 dark:hover:bg-zinc-800 transition-all hover:scale-105">
+        <a href={resumeUrl} {...externalLinkProps} className="px-7 py-3 border border-zinc-300 dark:border-zinc-600 text-sm font-semibold rounded-lg hover:bg-zinc-50 dark:hover:bg-zinc-800 transition-all hover:scale-105">
           Resume ↓
         </a>
       </motion.div>
 
       <motion.div
         className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-1 text-zinc-400"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 1.3, duration: 0.6 }}
+        {...fadeIn(1.3)}
       >
         <span className="text-xs tracking-widest uppercase">Scroll</span>
         <motion.div

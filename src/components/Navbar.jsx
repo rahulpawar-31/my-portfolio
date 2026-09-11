@@ -3,20 +3,17 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useTheme } from "next-themes";
 import { useEffect, useState } from "react";
+import { useMounted } from "@/hooks/useMounted";
+import { useScrolledPast } from "@/hooks/useScrolledPast";
 
 export default function Navbar() {
   const pathname = usePathname();
   const { theme, setTheme } = useTheme();
-  const [mounted, setMounted] = useState(false);
-  const [scrolled, setScrolled] = useState(false);
+  const mounted = useMounted();
+  const scrolled = useScrolledPast(20);
   const [activeSection, setActiveSection] = useState("");
 
   useEffect(() => {
-    setMounted(true);
-
-    const onScroll = () => setScrolled(window.scrollY > 20);
-    window.addEventListener("scroll", onScroll);
-
     const sections = ["projects", "contact"];
     const observers = [];
 
@@ -34,7 +31,6 @@ export default function Navbar() {
     });
 
     return () => {
-      window.removeEventListener("scroll", onScroll);
       observers.forEach((o) => o.disconnect());
     };
   }, []);

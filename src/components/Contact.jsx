@@ -1,6 +1,9 @@
 "use client";
 import { useState } from "react";
 import { motion } from "framer-motion";
+import SectionHeading from "@/components/SectionHeading";
+import { fadeInUpOnScroll, fadeInXOnScroll } from "@/lib/motion";
+import { externalLinkProps, socials, contactEmail } from "@/lib/site";
 
 export default function Contact() {
   const [formData, setFormData] = useState({ name: "", email: "", message: "" });
@@ -43,31 +46,25 @@ export default function Contact() {
       <div className="max-w-5xl mx-auto">
         <motion.div
           className="text-center mb-16"
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
+          {...fadeInUpOnScroll()}
         >
-          <p className="text-xs font-semibold tracking-widest uppercase text-yellow-500 dark:text-yellow-400 mb-3">
-            Get in touch
-          </p>
-          <h2 className="text-3xl md:text-4xl font-bold mb-4">Contact Me</h2>
-          <p className="text-zinc-500 dark:text-zinc-400 max-w-md mx-auto text-sm leading-relaxed">
-            Have a question, a project idea, or just want to say hi? I&apos;d love to hear from you.
-          </p>
+          <SectionHeading
+            eyebrow="Get in touch"
+            title="Contact Me"
+            description="Have a question, a project idea, or just want to say hi? I'd love to hear from you."
+            titleClassName="mb-4"
+            descriptionClassName="text-zinc-500 dark:text-zinc-400 max-w-md mx-auto text-sm leading-relaxed"
+          />
         </motion.div>
 
         <div className="grid grid-cols-1 md:grid-cols-5 gap-12 items-start">
           <motion.div
             className="md:col-span-2 space-y-6"
-            initial={{ opacity: 0, x: -20 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
+            {...fadeInXOnScroll(-20)}
           >
             <div>
               <p className="text-xs font-semibold text-zinc-400 uppercase tracking-widest mb-1">Email</p>
-              <p className="text-sm text-zinc-700 dark:text-zinc-300 font-medium">rahulcpawar3107@gmail.com</p>
+              <p className="text-sm text-zinc-700 dark:text-zinc-300 font-medium">{contactEmail}</p>
             </div>
             <div>
               <p className="text-xs font-semibold text-zinc-400 uppercase tracking-widest mb-1">Location</p>
@@ -76,8 +73,8 @@ export default function Contact() {
             <div>
               <p className="text-xs font-semibold text-zinc-400 uppercase tracking-widest mb-2">Socials</p>
               <div className="flex gap-3">
-                <a href="https://github.com/rahulpawar-31" target="_blank" rel="noopener noreferrer" className="text-xs px-3 py-1.5 rounded-lg border border-zinc-200 dark:border-zinc-700 text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors font-medium">GitHub ↗</a>
-                <a href="https://www.linkedin.com/in/rahul-pawar-5b8881240/" target="_blank" rel="noopener noreferrer" className="text-xs px-3 py-1.5 rounded-lg border border-zinc-200 dark:border-zinc-700 text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors font-medium">LinkedIn ↗</a>
+                <a href={socials.github} {...externalLinkProps} className="text-xs px-3 py-1.5 rounded-lg border border-zinc-200 dark:border-zinc-700 text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors font-medium">GitHub ↗</a>
+                <a href={socials.linkedin} {...externalLinkProps} className="text-xs px-3 py-1.5 rounded-lg border border-zinc-200 dark:border-zinc-700 text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors font-medium">LinkedIn ↗</a>
               </div>
             </div>
             <div className="pt-4 border-t border-zinc-200 dark:border-zinc-800">
@@ -88,10 +85,7 @@ export default function Contact() {
           <motion.form
             className="md:col-span-3 flex flex-col gap-4"
             onSubmit={handleSubmit}
-            initial={{ opacity: 0, x: 20 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6, delay: 0.1 }}
+            {...fadeInXOnScroll(20, 0.1)}
           >
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <input name="name" type="text" placeholder="Your name" value={formData.name} onChange={handleChange} className={inputClass} required />

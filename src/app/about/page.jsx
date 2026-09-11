@@ -2,6 +2,12 @@
 
 import { motion } from "framer-motion";
 import Link from "next/link";
+import {
+  fadeInScale,
+  fadeInUp,
+  fadeInX,
+} from "@/lib/motion";
+import { primaryButton, secondaryButton, tagPill } from "@/lib/styles";
 
 const techStack = [
   "Next.js", "React", "TypeScript", "Node.js",
@@ -33,9 +39,7 @@ export default function About() {
       <div className="max-w-2xl mx-auto">
 
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
+          {...fadeInUp()}
         >
           <div className="h-1.5 w-16 rounded-full bg-gradient-to-r from-yellow-400 to-orange-400 mb-8" />
           <h1 className="text-4xl font-bold mb-2">About Me</h1>
@@ -43,9 +47,7 @@ export default function About() {
         </motion.div>
 
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.15, duration: 0.6 }}
+          {...fadeInUp(0.15)}
           className="mt-8 space-y-4 text-zinc-600 dark:text-zinc-400 leading-relaxed"
         >
           <p>
@@ -71,9 +73,7 @@ export default function About() {
         </motion.div>
 
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.25, duration: 0.6 }}
+          {...fadeInUp(0.25)}
           className="mt-10 p-5 rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900"
         >
           <h2 className="text-sm font-semibold text-zinc-500 dark:text-zinc-400 uppercase tracking-widest mb-4">What I bring</h2>
@@ -93,9 +93,7 @@ export default function About() {
         </motion.div>
 
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.35, duration: 0.6 }}
+          {...fadeInUp(0.35)}
           className="mt-10"
         >
           <h2 className="text-2xl font-semibold mb-4">Tech Stack</h2>
@@ -103,10 +101,8 @@ export default function About() {
             {techStack.map((t, i) => (
               <motion.span
                 key={t}
-                initial={{ opacity: 0, scale: 0.8 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ delay: 0.4 + i * 0.04, duration: 0.3 }}
-                className="text-sm px-3 py-1.5 rounded-full bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 font-medium"
+                {...fadeInScale(0.4 + i * 0.04, 0.3)}
+                className={`text-sm px-3 py-1.5 ${tagPill}`}
               >
                 {t}
               </motion.span>
@@ -115,9 +111,7 @@ export default function About() {
         </motion.div>
 
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.5, duration: 0.6 }}
+          {...fadeInUp(0.5)}
           className="mt-10"
         >
           <h2 className="text-2xl font-semibold mb-6">My Journey</h2>
@@ -125,9 +119,7 @@ export default function About() {
             {timeline.map((item, i) => (
               <motion.div
                 key={i}
-                initial={{ opacity: 0, x: -20 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: 0.55 + i * 0.1, duration: 0.5 }}
+                {...fadeInX(-20, 0.55 + i * 0.1, 0.5)}
                 className="flex gap-4"
               >
                 <div className="flex flex-col items-center">
@@ -147,9 +139,7 @@ export default function About() {
         </motion.div>
 
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.75, duration: 0.6 }}
+          {...fadeInUp(0.75)}
           className="mt-4 p-6 rounded-2xl border border-yellow-200 dark:border-yellow-400/20 bg-yellow-50 dark:bg-yellow-400/5"
         >
           <p className="text-sm font-semibold text-zinc-800 dark:text-zinc-200 mb-1">
@@ -161,13 +151,13 @@ export default function About() {
           <div className="flex gap-3">
             <Link
               href="/#contact"
-              className="px-5 py-2 bg-black dark:bg-white text-white dark:text-black rounded-lg text-sm font-medium hover:bg-gray-800 dark:hover:bg-gray-200 transition-colors"
+              className={`px-5 py-2 text-sm font-medium ${primaryButton}`}
             >
               Get in touch
             </Link>
             <Link
               href="/#projects"
-              className="px-5 py-2 border border-zinc-300 dark:border-zinc-700 rounded-lg text-sm font-medium hover:bg-zinc-100 dark:hover:bg-zinc-900 transition-colors"
+              className={`px-5 py-2 text-sm font-medium ${secondaryButton}`}
             >
               View my work
             </Link>
