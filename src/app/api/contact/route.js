@@ -1,6 +1,27 @@
 import { Resend } from "resend";
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { clientIp, createRateLimiter } from "@/lib/rateLimit";
+
+const MAX_BODY_BYTES = 10 * 1024;
+const NAME_MAX = 100;
+const EMAIL_MAX = 200;
+const MESSAGE_MAX = 2000;
+
+const limiter = createRateLimiter({
+  name: "contact",
+  max: 5,
+  windowMs: 10 * 60 * 1000,
+});
+
+function escapeHtml(value) {
+  return value
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
+}
 
 export async function POST(req) {
   if (!process.env.RESEND_API_KEY) {
@@ -12,11 +33,32 @@ export async function POST(req) {
     return NextResponse.json({ error: "Server configuration error." }, { status: 500 });
   }
 
+  const contentType = req.headers.get("content-type") ?? "";
+  if (!contentType.includes("application/json")) {
+    return NextResponse.json({ error: "Unsupported content type" }, { status: 415 });
+  }
+
+  if (Number(req.headers.get("content-length") ?? 0) > MAX_BODY_BYTES) {
+    return NextResponse.json({ error: "Payload too large" }, { status: 413 });
+  }
+
+  const ip = clientIp(req);
+  if (limiter.isOverLimit(ip)) {
+    return NextResponse.json(
+      { error: "Too many messages. Please try again later." },
+      { status: 429 }
+    );
+  }
+
   const resend = new Resend(process.env.RESEND_API_KEY);
 
   let body;
   try {
-    body = await req.json();
+    const raw = await req.text();
+    if (raw.length > MAX_BODY_BYTES) {
+      return NextResponse.json({ error: "Payload too large" }, { status: 413 });
+    }
+    body = JSON.parse(raw);
   } catch (err) {
     console.error("Contact API: invalid JSON body:", err);
     return NextResponse.json({ error: "Invalid request body" }, { status: 400 });
@@ -25,7 +67,22 @@ export async function POST(req) {
   try {
     const { name, email, message } = body ?? {};
 
-    if (!name || !email || !message) {
+    if (
+      typeof name !== "string" ||
+      typeof email !== "string" ||
+      typeof message !== "string"
+    ) {
+      return NextResponse.json({ error: "All fields are required" }, { status: 400 });
+    }
+
+    const safeName = name
+      .replace(/<[^>]*>/g, "")
+      .replace(/[\r\n]+/g, " ")
+      .trim()
+      .slice(0, NAME_MAX);
+    const safeMessage = message.replace(/<[^>]*>/g, "").trim().slice(0, MESSAGE_MAX);
+
+    if (!safeName || !email || !safeMessage) {
       return NextResponse.json({ error: "All fields are required" }, { status: 400 });
     }
 
@@ -34,9 +91,9 @@ export async function POST(req) {
       return NextResponse.json({ error: "Please enter a valid email address" }, { status: 400 });
     }
 
-    const safeName    = String(name).replace(/<[^>]*>/g, "").trim().slice(0, 100);
-    const safeEmail   = String(email).trim().slice(0, 200);
-    const safeMessage = String(message).replace(/<[^>]*>/g, "").trim().slice(0, 2000);
+    const safeEmail = email.slice(0, EMAIL_MAX);
+
+    limiter.record(ip);
 
     try {
       await prisma.message.create({
@@ -65,10 +122,10 @@ export async function POST(req) {
           <div style="font-family: sans-serif; max-width: 520px; margin: 0 auto; color: #111;">
             <h2>New Contact Form Message</h2>
             <hr style="border: none; border-top: 1px solid #eee;" />
-            <p><strong>Name:</strong> ${safeName}</p>
-            <p><strong>Email:</strong> ${safeEmail}</p>
+            <p><strong>Name:</strong> ${escapeHtml(safeName)}</p>
+            <p><strong>Email:</strong> ${escapeHtml(safeEmail)}</p>
             <h3>Message:</h3>
-            <div style="background: #f9f9f9; padding: 16px; border-radius: 8px; line-height: 1.7; white-space: pre-wrap;">${safeMessage}</div>
+            <div style="background: #f9f9f9; padding: 16px; border-radius: 8px; line-height: 1.7; white-space: pre-wrap;">${escapeHtml(safeMessage)}</div>
             <hr style="border: none; border-top: 1px solid #eee; margin-top: 24px;" />
             <p style="color: #aaa; font-size: 12px;">Sent from your portfolio contact form</p>
           </div>
