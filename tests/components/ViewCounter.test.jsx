@@ -17,12 +17,21 @@ describe("ViewCounter", () => {
   });
 
   it("posts to the view endpoint for the slug and renders the count", async () => {
-    fetch.mockResolvedValue({ json: async () => ({ viewCount: 42 }) });
+    fetch.mockResolvedValue({ ok: true, json: async () => ({ viewCount: 42 }) });
 
     render(<ViewCounter slug="portfolio" />);
 
     await waitFor(() => expect(screen.getByText("42 views")).toBeInTheDocument());
     expect(fetch).toHaveBeenCalledWith("/api/projects/portfolio/view", { method: "POST" });
+  });
+
+  it("keeps the placeholder when the response is not ok", async () => {
+    fetch.mockResolvedValue({ ok: false, status: 500 });
+
+    render(<ViewCounter slug="portfolio" />);
+
+    await waitFor(() => expect(fetch).toHaveBeenCalled());
+    expect(screen.getByText("—")).toBeInTheDocument();
   });
 
   it("keeps the placeholder when the request fails", async () => {
@@ -35,7 +44,7 @@ describe("ViewCounter", () => {
   });
 
   it("refetches when the slug changes", async () => {
-    fetch.mockResolvedValue({ json: async () => ({ viewCount: 1 }) });
+    fetch.mockResolvedValue({ ok: true, json: async () => ({ viewCount: 1 }) });
 
     const { rerender } = render(<ViewCounter slug="a" />);
     await waitFor(() => expect(fetch).toHaveBeenCalledTimes(1));

@@ -15,7 +15,7 @@ export default async function Projects() {
           <SectionHeading eyebrow="What I've built" title="My Projects" />
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {projects.map((project, index) => (
+          {projects.map((project) => (
             <div
               key={project.slug}
               className="group rounded-2xl overflow-hidden border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 hover:shadow-xl hover:border-zinc-300 dark:hover:border-zinc-700 transition-all duration-300"

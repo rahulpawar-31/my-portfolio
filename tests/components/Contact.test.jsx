@@ -18,9 +18,14 @@ describe("Contact", () => {
     vi.stubGlobal("fetch", vi.fn());
   });
 
+  const okResponse = () => ({
+    ok: true,
+    json: async () => ({ success: true, message: "Message sent successfully!" }),
+  });
+
   it("submits the form data to the contact API", async () => {
     const user = userEvent.setup();
-    fetch.mockResolvedValue({ ok: true });
+    fetch.mockResolvedValue(okResponse());
 
     render(<Contact />);
     await fill(user);
@@ -39,7 +44,7 @@ describe("Contact", () => {
 
   it("clears the fields and confirms on success", async () => {
     const user = userEvent.setup();
-    fetch.mockResolvedValue({ ok: true });
+    fetch.mockResolvedValue(okResponse());
 
     render(<Contact />);
     await fill(user);
@@ -50,15 +55,21 @@ describe("Contact", () => {
     expect(screen.getByPlaceholderText("Your email")).toHaveValue("");
   });
 
-  it("shows an error when the API rejects the message", async () => {
+  it("shows the API error message when the request is rejected", async () => {
     const user = userEvent.setup();
-    fetch.mockResolvedValue({ ok: false });
+    fetch.mockResolvedValue({
+      ok: false,
+      status: 400,
+      json: async () => ({ error: "Please enter a valid email address" }),
+    });
 
     render(<Contact />);
     await fill(user);
     await user.click(screen.getByRole("button", { name: /send message/i }));
 
-    expect(await screen.findByText(/something went wrong/i)).toBeInTheDocument();
+    expect(
+      await screen.findByText(/please enter a valid email address/i)
+    ).toBeInTheDocument();
     expect(screen.getByPlaceholderText("Your name")).toHaveValue("Ada");
   });
 
@@ -70,7 +81,24 @@ describe("Contact", () => {
     await fill(user);
     await user.click(screen.getByRole("button", { name: /send message/i }));
 
-    expect(await screen.findByText(/something went wrong/i)).toBeInTheDocument();
+    expect(await screen.findByText(/offline/i)).toBeInTheDocument();
+  });
+
+  it("falls back to a generic error when the response has no body", async () => {
+    const user = userEvent.setup();
+    fetch.mockResolvedValue({
+      ok: false,
+      status: 502,
+      json: async () => {
+        throw new SyntaxError("not json");
+      },
+    });
+
+    render(<Contact />);
+    await fill(user);
+    await user.click(screen.getByRole("button", { name: /send message/i }));
+
+    expect(await screen.findByText(/failed with status 502/i)).toBeInTheDocument();
   });
 
   it("disables the button while sending", async () => {
@@ -85,7 +113,7 @@ describe("Contact", () => {
     const button = await screen.findByRole("button", { name: /sending/i });
     expect(button).toBeDisabled();
 
-    resolveFetch({ ok: true });
+    resolveFetch(okResponse());
     await waitFor(() => expect(screen.getByRole("button", { name: /send message/i })).toBeEnabled());
   });
 });

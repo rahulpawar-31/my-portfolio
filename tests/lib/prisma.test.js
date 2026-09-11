@@ -40,26 +40,42 @@ describe("lib/prisma", () => {
     const { prisma } = await loadModule();
 
     expect(prisma).toBeDefined();
+    // The client is created lazily, so nothing happens until a query is issued.
+    expect(prismaClientCalls).toHaveLength(0);
+
+    void prisma.project;
+
     expect(adapterCalls).toEqual([{ connectionString: "postgres://user:pass@host/db" }]);
     expect(prismaClientCalls).toHaveLength(1);
     expect(prismaClientCalls[0].adapter).toBeDefined();
+  });
+
+  it("throws on first use when DATABASE_URL is missing", async () => {
+    vi.stubEnv("DATABASE_URL", "");
+
+    const { prisma } = await loadModule();
+
+    expect(() => prisma.project).toThrow(/DATABASE_URL is not set/);
   });
 
   it("caches the client on globalThis outside production", async () => {
     vi.stubEnv("NODE_ENV", "development");
 
     const { prisma } = await loadModule();
+    void prisma.project;
 
-    expect(globalThis.prisma).toBe(prisma);
+    expect(globalThis.prisma).toBeDefined();
+
+    void prisma.project;
+    expect(prismaClientCalls).toHaveLength(1);
   });
 
   it("reuses a client already cached on globalThis", async () => {
-    const cached = { marker: "cached" };
-    globalThis.prisma = cached;
+    globalThis.prisma = { marker: "cached" };
 
     const { prisma } = await loadModule();
 
-    expect(prisma).toBe(cached);
+    expect(prisma.marker).toBe("cached");
     expect(prismaClientCalls).toHaveLength(0);
   });
 
@@ -67,8 +83,9 @@ describe("lib/prisma", () => {
     vi.stubEnv("NODE_ENV", "production");
 
     const { prisma } = await loadModule();
+    void prisma.project;
 
-    expect(prisma).toBeDefined();
+    expect(prismaClientCalls).toHaveLength(1);
     expect(globalThis.prisma).toBeUndefined();
   });
 });
