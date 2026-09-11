@@ -80,13 +80,13 @@ describe("GET /api/projects/[slug]/view", () => {
     await expect(res.json()).resolves.toEqual({ viewCount: 7 });
   });
 
-  it("falls back to zero for an unknown project", async () => {
+  it("returns 404 for an unknown project", async () => {
     findUnique.mockResolvedValue(null);
 
     const res = await getViewCount({}, context("nope"));
 
-    expect(res.status).toBe(200);
-    await expect(res.json()).resolves.toEqual({ viewCount: 0 });
+    expect(res.status).toBe(404);
+    await expect(res.json()).resolves.toEqual({ error: "Project not found" });
   });
 
   it("falls back to zero when viewCount is null", async () => {

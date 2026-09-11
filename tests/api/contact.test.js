@@ -153,18 +153,34 @@ describe("POST /api/contact", () => {
     const res = await POST(request(validBody));
 
     expect(res.status).toBe(500);
-    await expect(res.json()).resolves.toEqual({ error: "Something went wrong." });
+    await expect(res.json()).resolves.toEqual({
+      error: "Could not save your message. Please try again later.",
+    });
     expect(sendEmail).not.toHaveBeenCalled();
   });
 
-  it("returns 500 when the request body is not valid JSON", async () => {
+  it("returns 400 when the request body is not valid JSON", async () => {
     const res = await POST(
       request(() => {
         throw new SyntaxError("Unexpected token");
       })
     );
 
-    expect(res.status).toBe(500);
-    await expect(res.json()).resolves.toEqual({ error: "Something went wrong." });
+    expect(res.status).toBe(400);
+    await expect(res.json()).resolves.toEqual({ error: "Invalid request body" });
+    expect(createMessage).not.toHaveBeenCalled();
+  });
+
+  it("still reports success when the email request throws", async () => {
+    sendEmail.mockRejectedValue(new Error("network down"));
+
+    const res = await POST(request(validBody));
+
+    expect(res.status).toBe(200);
+    await expect(res.json()).resolves.toEqual({
+      success: true,
+      message: "Message saved! Email delivery may be delayed.",
+    });
+    expect(createMessage).toHaveBeenCalledTimes(1);
   });
 });

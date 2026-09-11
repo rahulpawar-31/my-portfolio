@@ -8,7 +8,7 @@ export async function GET(_req, { params }) {
     if (!project) {
       return NextResponse.json({ error: "Project not found" }, { status: 404 });
     }
-    return NextResponse.json({ viewCount: project.viewCount });
+    return NextResponse.json({ viewCount: project.viewCount ?? 0 });
   } catch (error) {
     console.error(`View count API: failed to fetch views for "${slug}":`, error);
     return NextResponse.json({ error: "Failed to fetch view count" }, { status: 500 });
