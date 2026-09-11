@@ -10,6 +10,9 @@ export default function CustomCursor() {
   const [isVisible, setIsVisible] = useState(false);
 
   useEffect(() => {
+    const supportsFinePointer = window.matchMedia("(pointer: fine)").matches;
+    if (!supportsFinePointer) return;
+
     document.body.style.cursor = "none";
 
     const moveCursor = (e) => {

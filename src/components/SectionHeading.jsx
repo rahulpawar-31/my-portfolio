@@ -7,7 +7,7 @@ export default function SectionHeading({
 }) {
   return (
     <>
-      <p className="text-xs font-semibold tracking-widest uppercase text-yellow-500 dark:text-yellow-400 mb-3">
+      <p className="text-xs font-semibold tracking-widest uppercase text-amber-700 dark:text-yellow-400 mb-3">
         {eyebrow}
       </p>
       <h2 className={`text-3xl md:text-4xl font-bold ${titleClassName || ""}`}>

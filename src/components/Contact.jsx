@@ -6,7 +6,7 @@ import { fadeInUpOnScroll, fadeInXOnScroll } from "@/lib/motion";
 import { externalLinkProps, socials, contactEmail } from "@/lib/site";
 
 export default function Contact() {
-  const [formData, setFormData] = useState({ name: "", email: "", message: "" });
+  const [formData, setFormData] = useState({ name: "", email: "", message: "", company: "" });
   const [status, setStatus] = useState("idle");
   const [errorMessage, setErrorMessage] = useState("");
 
@@ -31,7 +31,7 @@ export default function Contact() {
       }
 
       setStatus("success");
-      setFormData({ name: "", email: "", message: "" });
+      setFormData({ name: "", email: "", message: "", company: "" });
     } catch (err) {
       console.error("Contact form submission failed:", err);
       setErrorMessage(err.message);
@@ -87,6 +87,16 @@ export default function Contact() {
             onSubmit={handleSubmit}
             {...fadeInXOnScroll(20, 0.1)}
           >
+            <input
+              type="text"
+              name="company"
+              value={formData.company}
+              onChange={handleChange}
+              tabIndex={-1}
+              autoComplete="off"
+              aria-hidden="true"
+              className="absolute -left-[9999px] w-px h-px opacity-0"
+            />
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <input name="name" type="text" placeholder="Your name" value={formData.name} onChange={handleChange} className={inputClass} required />
               <input name="email" type="email" placeholder="Your email" value={formData.email} onChange={handleChange} className={inputClass} required />

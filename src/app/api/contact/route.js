@@ -62,7 +62,15 @@ export async function POST(req) {
   }
 
   try {
-    const { name, email, message } = body ?? {};
+    const { name, email, message, company } = body ?? {};
+
+    // Honeypot — real visitors never fill this hidden field, bots that auto-fill forms do.
+    if (company) {
+      return NextResponse.json(
+        { success: true, message: "Message sent successfully!" },
+        { status: 200 }
+      );
+    }
 
     if (
       typeof name !== "string" ||

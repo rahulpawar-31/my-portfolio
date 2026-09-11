@@ -5,3 +5,7 @@ export const socials = {
 export const contactEmail = "rahulcpawar3107@gmail.com";
 export const resumeUrl = "/resume.pdf";
 export const externalLinkProps = { target: "_blank", rel: "noopener noreferrer" };
+
+export const SITE_URL = "https://my-portfolio-pearl-eight-ki13whxvso.vercel.app";
+export const SITE_NAME = "Rahul.dev";
+export const AUTHOR_NAME = "Rahul Pawar";
