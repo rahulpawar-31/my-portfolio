@@ -156,6 +156,19 @@ describe("POST /api/contact", () => {
     expect(createMessage).toHaveBeenCalledTimes(1);
   });
 
+  it("still reports success when the email request throws", async () => {
+    sendEmail.mockRejectedValue(new Error("network down"));
+
+    const res = await POST(request(validBody));
+
+    expect(res.status).toBe(200);
+    await expect(res.json()).resolves.toEqual({
+      success: true,
+      message: "Message saved! Email delivery may be delayed.",
+    });
+    expect(createMessage).toHaveBeenCalledTimes(1);
+  });
+
   it("returns 500 when the database write throws", async () => {
     createMessage.mockRejectedValue(new Error("db down"));
 

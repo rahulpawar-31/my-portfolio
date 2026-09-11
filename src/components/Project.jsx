@@ -1,5 +1,4 @@
 import { prisma } from "@/lib/prisma";
-import { motion } from "framer-motion";
 import Link from "next/link";
 
 export default async function Projects() {
@@ -17,7 +16,7 @@ export default async function Projects() {
           <h2 className="text-3xl md:text-4xl font-bold">My Projects</h2>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {projects.map((project, index) => (
+          {projects.map((project) => (
             <div
               key={project.slug}
               className="group rounded-2xl overflow-hidden border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 hover:shadow-xl hover:border-zinc-300 dark:hover:border-zinc-700 transition-all duration-300"
