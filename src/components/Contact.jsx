@@ -71,13 +71,13 @@ export default function Contact() {
             </div>
             <div>
               <p className="text-xs font-semibold text-zinc-400 uppercase tracking-widest mb-1">Location</p>
-              <p className="text-sm text-zinc-700 dark:text-zinc-300 font-medium">India 🇮🇳</p>
+              <p className="text-sm text-zinc-700 dark:text-zinc-300 font-medium">Mumbai, India 🇮🇳</p>
             </div>
             <div>
               <p className="text-xs font-semibold text-zinc-400 uppercase tracking-widest mb-2">Socials</p>
               <div className="flex gap-3">
                 <a href="https://github.com/rahulpawar-31" target="_blank" rel="noopener noreferrer" className="text-xs px-3 py-1.5 rounded-lg border border-zinc-200 dark:border-zinc-700 text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors font-medium">GitHub ↗</a>
-                <a href="https://www.linkedin.com/in/rahul-pawar-5b8881240/" target="_blank" rel="noopener noreferrer" className="text-xs px-3 py-1.5 rounded-lg border border-zinc-200 dark:border-zinc-700 text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors font-medium">LinkedIn ↗</a>
+                <a href="https://www.linkedin.com/in/rahulpawar31" target="_blank" rel="noopener noreferrer" className="text-xs px-3 py-1.5 rounded-lg border border-zinc-200 dark:border-zinc-700 text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors font-medium">LinkedIn ↗</a>
               </div>
             </div>
             <div className="pt-4 border-t border-zinc-200 dark:border-zinc-800">

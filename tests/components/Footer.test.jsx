@@ -20,7 +20,7 @@ describe("Footer", () => {
     expect(github).toHaveAttribute("href", "https://github.com/rahulpawar-31");
     expect(linkedin).toHaveAttribute(
       "href",
-      "https://www.linkedin.com/in/rahul-pawar-5b8881240/"
+      "https://www.linkedin.com/in/rahulpawar31"
     );
     for (const link of [github, linkedin]) {
       expect(link).toHaveAttribute("target", "_blank");
