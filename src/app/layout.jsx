@@ -6,7 +6,7 @@ import Navbar from "@/components/Navbar";
 import CustomCursor from "@/components/CustomCursor";
 import PageLoader from "@/components/PageLoader";
 import BackToTop from "@/components/BackToTop";
-import { SITE_URL, SITE_NAME, AUTHOR_NAME, GITHUB_URL, LINKEDIN_URL } from "@/lib/site";
+import { SITE_URL, SITE_NAME, AUTHOR_NAME, socials } from "@/lib/site";
 import "./globals.css";
 
 const geistSans = Geist({ variable: "--font-geist-sans", subsets: ["latin"] });
@@ -40,7 +40,7 @@ const personJsonLd = {
   name: AUTHOR_NAME,
   url: SITE_URL,
   jobTitle: "Full Stack Developer",
-  sameAs: [GITHUB_URL, LINKEDIN_URL],
+  sameAs: [socials.github, socials.linkedin],
 };
 
 const websiteJsonLd = {

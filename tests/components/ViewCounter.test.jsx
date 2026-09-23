@@ -25,6 +25,15 @@ describe("ViewCounter", () => {
     expect(fetch).toHaveBeenCalledWith("/api/projects/portfolio/view", { method: "POST" });
   });
 
+  it("keeps the placeholder when the response is not ok", async () => {
+    fetch.mockResolvedValue({ ok: false, status: 500 });
+
+    render(<ViewCounter slug="portfolio" />);
+
+    await waitFor(() => expect(fetch).toHaveBeenCalled());
+    expect(screen.getByText("—")).toBeInTheDocument();
+  });
+
   it("keeps the placeholder when the request fails", async () => {
     fetch.mockRejectedValue(new Error("offline"));
 

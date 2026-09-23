@@ -1,54 +1,63 @@
 import { Resend } from "resend";
-import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { jsonError, jsonSuccess, handleApiError } from "@/lib/api";
+import { clientIp, createRateLimiter } from "@/lib/rateLimit";
 
-const RATE_LIMIT_WINDOW_MS = 60_000;
-const RATE_LIMIT_MAX_REQUESTS = 3;
-const requestLog = new Map();
+const MAX_BODY_BYTES = 10 * 1024;
+const NAME_MAX = 100;
+const EMAIL_MAX = 200;
+const MESSAGE_MAX = 2000;
 
-function isRateLimited(ip) {
-  const now = Date.now();
-  const timestamps = (requestLog.get(ip) || []).filter(
-    (t) => now - t < RATE_LIMIT_WINDOW_MS
-  );
-  timestamps.push(now);
-  requestLog.set(ip, timestamps);
+const limiter = createRateLimiter({
+  name: "contact",
+  max: 5,
+  windowMs: 10 * 60 * 1000,
+});
 
-  if (requestLog.size > 5000) {
-    for (const [key, value] of requestLog) {
-      if (!value.some((t) => now - t < RATE_LIMIT_WINDOW_MS)) requestLog.delete(key);
-    }
-  }
-
-  return timestamps.length > RATE_LIMIT_MAX_REQUESTS;
+function escapeHtml(value) {
+  return value
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
 }
 
 export async function POST(req) {
   if (!process.env.RESEND_API_KEY) {
     console.error("Contact API: RESEND_API_KEY is not set");
-    return NextResponse.json({ error: "Server configuration error." }, { status: 500 });
+    return jsonError("Server configuration error.", 500);
   }
   if (!process.env.CONTACT_EMAIL) {
     console.error("Contact API: CONTACT_EMAIL is not set");
-    return NextResponse.json({ error: "Server configuration error." }, { status: 500 });
+    return jsonError("Server configuration error.", 500);
   }
 
-  const ip = req.headers.get("x-forwarded-for")?.split(",")[0].trim() || "unknown";
-  if (isRateLimited(ip)) {
-    return NextResponse.json(
-      { error: "Too many requests. Please try again in a minute." },
-      { status: 429 }
-    );
+  const contentType = req.headers.get("content-type") ?? "";
+  if (!contentType.includes("application/json")) {
+    return jsonError("Unsupported content type", 415);
+  }
+
+  if (Number(req.headers.get("content-length") ?? 0) > MAX_BODY_BYTES) {
+    return jsonError("Payload too large", 413);
+  }
+
+  const ip = clientIp(req);
+  if (limiter.isOverLimit(ip)) {
+    return jsonError("Too many messages. Please try again later.", 429);
   }
 
   const resend = new Resend(process.env.RESEND_API_KEY);
 
   let body;
   try {
-    body = await req.json();
+    const raw = await req.text();
+    if (raw.length > MAX_BODY_BYTES) {
+      return jsonError("Payload too large", 413);
+    }
+    body = JSON.parse(raw);
   } catch (err) {
-    console.error("Contact API: invalid JSON body:", err);
-    return NextResponse.json({ error: "Invalid request body" }, { status: 400 });
+    return handleApiError(err, "Contact API: invalid JSON body:", "Invalid request body", 400);
   }
 
   try {
@@ -56,21 +65,36 @@ export async function POST(req) {
 
     // Honeypot — real visitors never fill this hidden field, bots that auto-fill forms do.
     if (company) {
-      return NextResponse.json({ success: true, message: "Message sent successfully!" }, { status: 200 });
+      return jsonSuccess("Message sent successfully!");
     }
 
-    if (!name || !email || !message) {
-      return NextResponse.json({ error: "All fields are required" }, { status: 400 });
+    if (
+      typeof name !== "string" ||
+      typeof email !== "string" ||
+      typeof message !== "string"
+    ) {
+      return jsonError("All fields are required", 400);
+    }
+
+    const safeName = name
+      .replace(/<[^>]*>/g, "")
+      .replace(/[\r\n]+/g, " ")
+      .trim()
+      .slice(0, NAME_MAX);
+    const safeMessage = message.replace(/<[^>]*>/g, "").trim().slice(0, MESSAGE_MAX);
+
+    if (!safeName || !email || !safeMessage) {
+      return jsonError("All fields are required", 400);
     }
 
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) {
-      return NextResponse.json({ error: "Please enter a valid email address" }, { status: 400 });
+      return jsonError("Please enter a valid email address", 400);
     }
 
-    const safeName    = String(name).replace(/<[^>]*>/g, "").trim().slice(0, 100);
-    const safeEmail   = String(email).trim().slice(0, 200);
-    const safeMessage = String(message).replace(/<[^>]*>/g, "").trim().slice(0, 2000);
+    const safeEmail = email.slice(0, EMAIL_MAX);
+
+    limiter.record(ip);
 
     try {
       await prisma.message.create({
@@ -81,10 +105,11 @@ export async function POST(req) {
         },
       });
     } catch (err) {
-      console.error("Contact API: failed to save message to the database:", err);
-      return NextResponse.json(
-        { error: "Could not save your message. Please try again later." },
-        { status: 500 }
+      return handleApiError(
+        err,
+        "Contact API: failed to save message to the database:",
+        "Could not save your message. Please try again later.",
+        500
       );
     }
 
@@ -99,10 +124,10 @@ export async function POST(req) {
           <div style="font-family: sans-serif; max-width: 520px; margin: 0 auto; color: #111;">
             <h2>New Contact Form Message</h2>
             <hr style="border: none; border-top: 1px solid #eee;" />
-            <p><strong>Name:</strong> ${safeName}</p>
-            <p><strong>Email:</strong> ${safeEmail}</p>
+            <p><strong>Name:</strong> ${escapeHtml(safeName)}</p>
+            <p><strong>Email:</strong> ${escapeHtml(safeEmail)}</p>
             <h3>Message:</h3>
-            <div style="background: #f9f9f9; padding: 16px; border-radius: 8px; line-height: 1.7; white-space: pre-wrap;">${safeMessage}</div>
+            <div style="background: #f9f9f9; padding: 16px; border-radius: 8px; line-height: 1.7; white-space: pre-wrap;">${escapeHtml(safeMessage)}</div>
             <hr style="border: none; border-top: 1px solid #eee; margin-top: 24px;" />
             <p style="color: #aaa; font-size: 12px;">Sent from your portfolio contact form</p>
           </div>
@@ -110,27 +135,17 @@ export async function POST(req) {
       }));
     } catch (err) {
       console.error("Contact API: Resend request failed:", err);
-      return NextResponse.json(
-        { success: true, message: "Message saved! Email delivery may be delayed." },
-        { status: 200 }
-      );
+      return jsonSuccess("Message saved! Email delivery may be delayed.");
     }
 
     if (error) {
       console.error("Contact API: Resend rejected the email:", error);
-      return NextResponse.json(
-        { success: true, message: "Message saved! Email delivery may be delayed." },
-        { status: 200 }
-      );
+      return jsonSuccess("Message saved! Email delivery may be delayed.");
     }
 
-    return NextResponse.json(
-      { success: true, message: "Message sent successfully!" },
-      { status: 200 }
-    );
+    return jsonSuccess("Message sent successfully!");
 
   } catch (err) {
-    console.error("Contact API error:", err);
-    return NextResponse.json({ error: "Something went wrong." }, { status: 500 });
+    return handleApiError(err, "Contact API error:", "Something went wrong.", 500);
   }
 }

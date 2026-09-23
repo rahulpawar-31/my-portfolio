@@ -3,7 +3,9 @@ import Link from "next/link";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import ViewCounter from "@/components/ViewCounter";
-import { prisma } from "@/lib/prisma";
+import { findProjectBySlug } from "@/lib/api";
+import { primaryButton, tagPill } from "@/lib/styles";
+import { externalLinkProps } from "@/lib/site";
 
 async function getReadme(githubUrl) {
   try {
@@ -40,14 +42,14 @@ async function getReadme(githubUrl) {
 
 export async function generateMetadata({ params }) {
   const { slug } = await params;
-  const project = await prisma.project.findUnique({ where: { slug } });
+  const project = await findProjectBySlug(slug);
   if (!project) return {};
   return { title: `${project.name} — Rahul`, description: project.desc };
 }
 
 export default async function ProjectPage({ params }) {
   const { slug } = await params;
-  const project = await prisma.project.findUnique({ where: { slug } });
+  const project = await findProjectBySlug(slug);
   if (!project) notFound();
 
   const rawReadme = await getReadme(project.githubUrl);
@@ -83,7 +85,7 @@ export default async function ProjectPage({ params }) {
           {project.tech.map((t) => (
             <span
               key={t}
-              className="text-xs px-3 py-1 rounded-full bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 font-medium"
+              className={`text-xs px-3 py-1 ${tagPill}`}
             >
               {t}
             </span>
@@ -93,8 +95,7 @@ export default async function ProjectPage({ params }) {
         <div className="flex gap-3 mb-10">
           <a
             href={project.githubUrl}
-            target="_blank"
-            rel="noopener noreferrer"
+            {...externalLinkProps}
             className="flex items-center gap-2 px-4 py-2 rounded-lg border border-zinc-200 dark:border-zinc-700 text-sm hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors"
           >
             GitHub
@@ -102,9 +103,8 @@ export default async function ProjectPage({ params }) {
           {project.liveUrl && (
             <a
               href={project.liveUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex items-center gap-2 px-4 py-2 rounded-lg bg-black dark:bg-white text-white dark:text-black text-sm hover:bg-gray-800 dark:hover:bg-gray-200 transition-colors"
+              {...externalLinkProps}
+              className={`flex items-center gap-2 px-4 py-2 text-sm ${primaryButton}`}
             >
               Live Demo
             </a>
@@ -164,7 +164,7 @@ export default async function ProjectPage({ params }) {
           </Link>
           <Link
             href="/#contact"
-            className="text-sm px-4 py-2 bg-black dark:bg-white text-white dark:text-black rounded-lg hover:bg-gray-800 dark:hover:bg-gray-200 transition-colors"
+            className={`text-sm px-4 py-2 ${primaryButton}`}
           >
             Contact me
           </Link>

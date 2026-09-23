@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { fadeInUp } from "@/lib/motion";
 
 export default function PageLoader() {
   const [loading, setLoading] = useState(true);
@@ -36,9 +37,7 @@ export default function PageLoader() {
           }}
         >
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.1 }}
+            {...fadeInUp(0.1, 0.5)}
             className="mb-10 text-center"
           >
             <h1 className="text-4xl font-bold text-white tracking-tight">

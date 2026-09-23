@@ -2,6 +2,8 @@
 
 import { motion } from "framer-motion";
 import Link from "next/link";
+import { fadeInScale, fadeInUp } from "@/lib/motion";
+import { primaryButton, secondaryButton } from "@/lib/styles";
 
 export default function NotFound() {
   return (
@@ -9,18 +11,14 @@ export default function NotFound() {
 
       <motion.h1
         className="text-[120px] md:text-[180px] font-bold leading-none text-zinc-100 dark:text-zinc-900 select-none"
-        initial={{ opacity: 0, scale: 0.8 }}
-        animate={{ opacity: 1, scale: 1 }}
-        transition={{ duration: 0.6 }}
+        {...fadeInScale()}
       >
         404
       </motion.h1>
 
       <motion.div
         className="-mt-8 md:-mt-12"
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.3, duration: 0.6 }}
+        {...fadeInUp(0.3)}
       >
         <h2 className="text-2xl md:text-3xl font-bold text-zinc-800 dark:text-zinc-200">
           Page not found
@@ -32,19 +30,17 @@ export default function NotFound() {
 
       <motion.div
         className="mt-8 flex gap-4"
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.5, duration: 0.6 }}
+        {...fadeInUp(0.5)}
       >
         <Link
           href="/"
-          className="px-6 py-3 bg-black dark:bg-white text-white dark:text-black rounded-lg text-sm font-medium hover:bg-gray-800 dark:hover:bg-gray-200 transition-colors"
+          className={`px-6 py-3 text-sm font-medium ${primaryButton}`}
         >
           Go home
         </Link>
         <Link
           href="/#contact"
-          className="px-6 py-3 border border-zinc-300 dark:border-zinc-700 rounded-lg text-sm font-medium hover:bg-zinc-100 dark:hover:bg-zinc-900 transition-colors"
+          className={`px-6 py-3 text-sm font-medium ${secondaryButton}`}
         >
           Contact me
         </Link>

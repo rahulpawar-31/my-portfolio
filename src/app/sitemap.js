@@ -1,15 +1,15 @@
 import { prisma } from "@/lib/prisma";
 import { SITE_URL } from "@/lib/site";
 
+// Queries the DB for project slugs, which isn't reachable at build time in
+// this project's environment (same reason projects/[slug]/page.jsx has no
+// generateStaticParams) — force this to run per-request instead.
+export const dynamic = "force-dynamic";
+
 export default async function sitemap() {
-  let projects = [];
-  try {
-    projects = await prisma.project.findMany({
-      select: { slug: true, updatedAt: true },
-    });
-  } catch (error) {
-    console.error("sitemap: failed to fetch projects", error);
-  }
+  const projects = await prisma.project.findMany({
+    select: { slug: true, updatedAt: true },
+  });
 
   const projectEntries = projects.map((project) => ({
     url: `${SITE_URL}/projects/${project.slug}`,

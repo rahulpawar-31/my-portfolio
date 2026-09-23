@@ -1,5 +1,7 @@
 import { prisma } from "@/lib/prisma";
 import Link from "next/link";
+import SectionHeading from "@/components/SectionHeading";
+import { externalLinkProps } from "@/lib/site";
 
 export default async function Projects() {
   let projects = [];
@@ -15,10 +17,7 @@ export default async function Projects() {
     <section className="py-24 px-6 bg-white dark:bg-black" id="projects">
       <div className="max-w-6xl mx-auto">
         <div className="text-center mb-16">
-          <p className="text-xs font-semibold tracking-widest uppercase text-amber-700 dark:text-yellow-400 mb-3">
-            What I&apos;ve built
-          </p>
-          <h2 className="text-3xl md:text-4xl font-bold">My Projects</h2>
+          <SectionHeading eyebrow="What I've built" title="My Projects" />
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {projects.map((project) => (
@@ -67,8 +66,7 @@ export default async function Projects() {
                   </Link>
                   <a
                     href={project.githubUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
+                    {...externalLinkProps}
                     className="text-sm font-medium py-2 px-4 rounded-lg border border-zinc-200 dark:border-zinc-700 hover:bg-zinc-50 dark:hover:bg-zinc-800 transition-colors"
                   >
                     GitHub
@@ -76,8 +74,7 @@ export default async function Projects() {
                   {project.liveUrl && (
                     <a
                       href={project.liveUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
+                      {...externalLinkProps}
                       className="text-sm font-medium py-2 px-4 rounded-lg border border-zinc-200 dark:border-zinc-700 hover:bg-zinc-50 dark:hover:bg-zinc-800 transition-colors"
                     >
                       Live
