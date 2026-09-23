@@ -20,7 +20,7 @@ describe("Contact", () => {
 
   it("submits the form data to the contact API", async () => {
     const user = userEvent.setup();
-    fetch.mockResolvedValue({ ok: true });
+    fetch.mockResolvedValue({ ok: true, json: async () => ({}) });
 
     render(<Contact />);
     await fill(user);
@@ -40,7 +40,7 @@ describe("Contact", () => {
 
   it("clears the fields and confirms on success", async () => {
     const user = userEvent.setup();
-    fetch.mockResolvedValue({ ok: true });
+    fetch.mockResolvedValue({ ok: true, json: async () => ({}) });
 
     render(<Contact />);
     await fill(user);
@@ -53,13 +53,17 @@ describe("Contact", () => {
 
   it("shows an error when the API rejects the message", async () => {
     const user = userEvent.setup();
-    fetch.mockResolvedValue({ ok: false });
+    fetch.mockResolvedValue({
+      ok: false,
+      status: 500,
+      json: async () => ({ error: "Failed to send your message" }),
+    });
 
     render(<Contact />);
     await fill(user);
     await user.click(screen.getByRole("button", { name: /send message/i }));
 
-    expect(await screen.findByText(/something went wrong/i)).toBeInTheDocument();
+    expect(await screen.findByText(/failed to send your message/i)).toBeInTheDocument();
     expect(screen.getByPlaceholderText("Your name")).toHaveValue("Ada");
   });
 
@@ -71,7 +75,7 @@ describe("Contact", () => {
     await fill(user);
     await user.click(screen.getByRole("button", { name: /send message/i }));
 
-    expect(await screen.findByText(/something went wrong/i)).toBeInTheDocument();
+    expect(await screen.findByText(/offline/i)).toBeInTheDocument();
   });
 
   it("disables the button while sending", async () => {
@@ -86,7 +90,7 @@ describe("Contact", () => {
     const button = await screen.findByRole("button", { name: /sending/i });
     expect(button).toBeDisabled();
 
-    resolveFetch({ ok: true });
+    resolveFetch({ ok: true, json: async () => ({}) });
     await waitFor(() => expect(screen.getByRole("button", { name: /send message/i })).toBeEnabled());
   });
 });

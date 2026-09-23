@@ -38,8 +38,9 @@ describe("lib/prisma", () => {
 
   it("builds a client with a Neon adapter using DATABASE_URL", async () => {
     const { prisma } = await loadModule();
+    // prisma is a lazy proxy — touch a property to trigger client creation
+    void prisma.$connect;
 
-    expect(prisma).toBeDefined();
     expect(adapterCalls).toEqual([{ connectionString: "postgres://user:pass@host/db" }]);
     expect(prismaClientCalls).toHaveLength(1);
     expect(prismaClientCalls[0].adapter).toBeDefined();
@@ -49,8 +50,10 @@ describe("lib/prisma", () => {
     vi.stubEnv("NODE_ENV", "development");
 
     const { prisma } = await loadModule();
+    void prisma.$connect;
 
-    expect(globalThis.prisma).toBe(prisma);
+    expect(globalThis.prisma).toBeDefined();
+    expect(prismaClientCalls).toHaveLength(1);
   });
 
   it("reuses a client already cached on globalThis", async () => {
@@ -59,7 +62,7 @@ describe("lib/prisma", () => {
 
     const { prisma } = await loadModule();
 
-    expect(prisma).toBe(cached);
+    expect(prisma.marker).toBe("cached");
     expect(prismaClientCalls).toHaveLength(0);
   });
 
@@ -67,8 +70,9 @@ describe("lib/prisma", () => {
     vi.stubEnv("NODE_ENV", "production");
 
     const { prisma } = await loadModule();
+    void prisma.$connect;
 
-    expect(prisma).toBeDefined();
+    expect(prismaClientCalls).toHaveLength(1);
     expect(globalThis.prisma).toBeUndefined();
   });
 });

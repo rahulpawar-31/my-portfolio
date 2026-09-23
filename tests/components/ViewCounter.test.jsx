@@ -17,7 +17,7 @@ describe("ViewCounter", () => {
   });
 
   it("posts to the view endpoint for the slug and renders the count", async () => {
-    fetch.mockResolvedValue({ json: async () => ({ viewCount: 42 }) });
+    fetch.mockResolvedValue({ ok: true, json: async () => ({ viewCount: 42 }) });
 
     render(<ViewCounter slug="portfolio" />);
 
@@ -35,7 +35,7 @@ describe("ViewCounter", () => {
   });
 
   it("refetches when the slug changes", async () => {
-    fetch.mockResolvedValue({ json: async () => ({ viewCount: 1 }) });
+    fetch.mockResolvedValue({ ok: true, json: async () => ({ viewCount: 1 }) });
 
     const { rerender } = render(<ViewCounter slug="a" />);
     await waitFor(() => expect(fetch).toHaveBeenCalledTimes(1));
