@@ -33,7 +33,7 @@ describe("Hero", () => {
     expect(screen.getByRole("heading", { level: 1 })).toHaveTextContent("Hi, I'm Rahul");
     expect(screen.getByText("Projects Built")).toBeInTheDocument();
     expect(screen.getByText("Full Stack")).toBeInTheDocument();
-    expect(screen.getByText("To Internship")).toBeInTheDocument();
+    expect(screen.getByText("To Full-time")).toBeInTheDocument();
   });
 
   it("links to the resume in a new tab", () => {

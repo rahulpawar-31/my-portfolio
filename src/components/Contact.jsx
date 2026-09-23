@@ -68,7 +68,7 @@ export default function Contact() {
             </div>
             <div>
               <p className="text-xs font-semibold text-zinc-400 uppercase tracking-widest mb-1">Location</p>
-              <p className="text-sm text-zinc-700 dark:text-zinc-300 font-medium">India 🇮🇳</p>
+              <p className="text-sm text-zinc-700 dark:text-zinc-300 font-medium">Mumbai, India 🇮🇳</p>
             </div>
             <div>
               <p className="text-xs font-semibold text-zinc-400 uppercase tracking-widest mb-2">Socials</p>

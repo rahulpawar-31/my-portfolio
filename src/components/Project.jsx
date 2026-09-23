@@ -4,9 +4,14 @@ import SectionHeading from "@/components/SectionHeading";
 import { externalLinkProps } from "@/lib/site";
 
 export default async function Projects() {
-  const projects = await prisma.project.findMany({
-    orderBy: { createdAt: "asc" },
-  });
+  let projects = [];
+  try {
+    projects = await prisma.project.findMany({
+      orderBy: { createdAt: "asc" },
+    });
+  } catch (error) {
+    console.error("Projects: failed to fetch projects", error);
+  }
 
   return (
     <section className="py-24 px-6 bg-white dark:bg-black" id="projects">

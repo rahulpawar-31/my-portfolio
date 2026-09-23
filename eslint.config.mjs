@@ -13,8 +13,10 @@ const eslintConfig = defineConfig([
     "build/**",
     "next-env.d.ts",
     "coverage/**",
-    // Prisma client output: generated code, not ours to lint.
+    // Vendored/generated code — not ours to lint.
     "src/generated/**",
+    "prisma/seed.js",
+    "tailwind.config.js",
   ]),
   {
     // CommonJS files run outside the bundler (Node scripts, PostCSS/Tailwind config).

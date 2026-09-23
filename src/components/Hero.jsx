@@ -8,9 +8,9 @@ import { useMounted } from "@/hooks/useMounted";
 const roles = ["a Developer 💻", "a Next.js Learner 🚀", "a Problem Solver 🧠", "a Builder ⚡"];
 
 const stats = [
-  { value: "4+", label: "Projects Built" },
+  { value: "5+", label: "Projects Built" },
   { value: "Full Stack", label: "Next.js + Node.js" },
-  { value: "Open", label: "To Internship" },
+  { value: "Open", label: "To Full-time" },
 ];
 
 export default function Hero() {
@@ -35,6 +35,7 @@ export default function Hero() {
       return () => clearTimeout(t);
     }
     if (isDeleting && displayed.length === 0) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- advances the typewriter state machine once a word fully deletes
       setIsDeleting(false);
       setCurrentRole((prev) => (prev + 1) % roles.length);
     }

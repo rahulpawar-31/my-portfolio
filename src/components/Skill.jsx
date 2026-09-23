@@ -7,17 +7,22 @@ const skillGroups = [
   {
     label: "Frontend",
     color: "from-yellow-400 to-orange-400",
-    skills: ["HTML", "CSS", "JavaScript", "Next.js", "React"],
+    skills: ["HTML", "CSS", "JavaScript", "TypeScript", "React", "Next.js"],
   },
   {
     label: "Backend",
     color: "from-green-400 to-teal-400",
-    skills: ["Node.js", "Express", "REST API"],
+    skills: ["Node.js", "Express", "Payload CMS", "REST API"],
   },
   {
     label: "Database",
     color: "from-blue-400 to-cyan-400",
-    skills: ["MongoDB", "SQL", "PostgreSQL", "Prisma"],
+    skills: ["MongoDB", "PostgreSQL", "MySQL", "Prisma"],
+  },
+  {
+    label: "Tools & AI",
+    color: "from-rose-400 to-purple-400",
+    skills: ["Git", "GitHub", "Docker", "Vercel", "Railway", "Stripe/Razorpay", "Claude", "OpenAI GPT", "LangChain.js"],
   },
 ];
 
@@ -32,7 +37,7 @@ export default function Skills() {
           <SectionHeading eyebrow="What I work with" title="My Skills" />
         </motion.div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           {skillGroups.map((group, gi) => (
             <motion.div
               key={group.label}

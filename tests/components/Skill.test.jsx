@@ -8,7 +8,7 @@ describe("Skills", () => {
     render(<Skills />);
 
     expect(screen.getByRole("heading", { name: "My Skills" })).toBeInTheDocument();
-    for (const group of ["Frontend", "Backend", "Database"]) {
+    for (const group of ["Frontend", "Backend", "Database", "Tools & AI"]) {
       expect(screen.getByText(group)).toBeInTheDocument();
     }
   });
@@ -20,15 +20,26 @@ describe("Skills", () => {
       "HTML",
       "CSS",
       "JavaScript",
-      "Next.js",
+      "TypeScript",
       "React",
+      "Next.js",
       "Node.js",
       "Express",
+      "Payload CMS",
       "REST API",
       "MongoDB",
-      "SQL",
       "PostgreSQL",
+      "MySQL",
       "Prisma",
+      "Git",
+      "GitHub",
+      "Docker",
+      "Vercel",
+      "Railway",
+      "Stripe/Razorpay",
+      "Claude",
+      "OpenAI GPT",
+      "LangChain.js",
     ];
 
     for (const skill of skills) {

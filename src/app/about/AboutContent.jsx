@@ -11,8 +11,8 @@ import { primaryButton, secondaryButton, tagPill } from "@/lib/styles";
 
 const techStack = [
   "Next.js", "React", "TypeScript", "Node.js",
-  "Express", "MongoDB", "PostgreSQL", "Tailwind CSS",
-  "Prisma", "Framer Motion",
+  "Express", "Payload CMS", "MongoDB", "PostgreSQL",
+  "Tailwind CSS", "Prisma", "Docker", "Framer Motion",
 ];
 
 const timeline = [
@@ -31,6 +31,11 @@ const timeline = [
     title: "Mastered Modern Web Dev",
     desc: "Dived deep into Next.js, TypeScript, PostgreSQL and Prisma. Built and deployed this portfolio with a real database, email integration and CI/CD pipeline.",
   },
+  {
+    year: "Now",
+    title: "Junior Web Developer Intern @ Webby Wonder",
+    desc: "Working on CountryStateCity, an established developer API with a large user base, and MakeMySiteLive, a static-site hosting and deployment platform — shipping real features end-to-end while finishing my BCA.",
+  },
 ];
 
 export default function AboutContent() {
@@ -43,7 +48,7 @@ export default function AboutContent() {
         >
           <div className="h-1.5 w-16 rounded-full bg-gradient-to-r from-yellow-400 to-orange-400 mb-8" />
           <h1 className="text-4xl font-bold mb-2">About Me</h1>
-          <p className="text-zinc-500 dark:text-zinc-400 text-sm">Fresh Graduate · Full Stack Developer · India 🇮🇳</p>
+          <p className="text-zinc-500 dark:text-zinc-400 text-sm">BCA Student · Full Stack Developer · Mumbai, India 🇮🇳</p>
         </motion.div>
 
         <motion.div
@@ -64,7 +69,12 @@ export default function AboutContent() {
             Every project I build teaches me something new and pushes me closer to that goal.
           </p>
           <p>
-            I&apos;m a fresh graduate actively looking for a{" "}
+            I&apos;m currently a{" "}
+            <span className="font-medium text-zinc-800 dark:text-zinc-200">
+              Junior Web Developer Intern at Webby Wonder
+            </span>
+            , working on CountryStateCity and MakeMySiteLive, while finishing my BCA and
+            actively looking for a{" "}
             <span className="font-medium text-zinc-800 dark:text-zinc-200">
               full-time full stack developer role
             </span>{" "}
@@ -79,7 +89,7 @@ export default function AboutContent() {
           <h2 className="text-sm font-semibold text-zinc-500 dark:text-zinc-400 uppercase tracking-widest mb-4">What I bring</h2>
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             {[
-              { icon: "🚀", title: "4+ Projects", desc: "Built and deployed real apps" },
+              { icon: "🚀", title: "5+ Projects", desc: "Built and deployed real apps" },
               { icon: "🔧", title: "Full Stack", desc: "Frontend + Backend + DB" },
               { icon: "📦", title: "Ship Ready", desc: "CI/CD, Vercel, Neon DB" },
             ].map((item) => (

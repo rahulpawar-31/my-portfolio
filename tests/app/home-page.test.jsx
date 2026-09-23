@@ -11,11 +11,11 @@ vi.mock("@/components/GitHubActivity", () => stub("github"));
 vi.mock("@/components/Contact", () => stub("contact"));
 vi.mock("@/components/Footer", () => stub("footer"));
 
-const { default: Home, dynamic } = await import("@/app/page");
+const { default: Home, revalidate } = await import("@/app/page");
 
 describe("Home page", () => {
-  it("is rendered dynamically so project data is never stale", () => {
-    expect(dynamic).toBe("force-dynamic");
+  it("is statically rendered and revalidated every five minutes", () => {
+    expect(revalidate).toBe(300);
   });
 
   it("composes every homepage section in order", () => {
