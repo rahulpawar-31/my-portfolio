@@ -2,9 +2,14 @@ import { prisma } from "@/lib/prisma";
 import { SITE_URL } from "@/lib/site";
 
 export default async function sitemap() {
-  const projects = await prisma.project.findMany({
-    select: { slug: true, updatedAt: true },
-  });
+  let projects = [];
+  try {
+    projects = await prisma.project.findMany({
+      select: { slug: true, updatedAt: true },
+    });
+  } catch (error) {
+    console.error("sitemap: failed to fetch projects", error);
+  }
 
   const projectEntries = projects.map((project) => ({
     url: `${SITE_URL}/projects/${project.slug}`,
