@@ -44,6 +44,7 @@ describe("Navbar", () => {
 
     expect(screen.getByRole("link", { name: "Home" })).toHaveAttribute("href", "/");
     expect(screen.getByRole("link", { name: "About" })).toHaveAttribute("href", "/about");
+    expect(screen.getByRole("link", { name: "Experience" })).toHaveAttribute("href", "/#experience");
     expect(screen.getByRole("link", { name: "Projects" })).toHaveAttribute("href", "/#projects");
     expect(screen.getByRole("link", { name: "Contact" })).toHaveAttribute("href", "/#contact");
   });
@@ -126,6 +127,47 @@ describe("Navbar", () => {
     await userEvent.click(toggle);
 
     expect(setTheme).toHaveBeenCalledWith("dark");
+  });
+
+  it("opens a mobile menu listing every link and closes it when a link is tapped", async () => {
+    const user = userEvent.setup();
+    render(<Navbar />);
+
+    const button = screen.getByRole("button", { name: "Menu" });
+    expect(button).toHaveAttribute("aria-expanded", "false");
+    expect(document.getElementById("mobile-menu")).toBeNull();
+
+    await user.click(button);
+
+    expect(button).toHaveAttribute("aria-expanded", "true");
+    const menu = document.getElementById("mobile-menu");
+    const menuLinks = [...menu.querySelectorAll("a")].map((a) => [a.textContent, a.getAttribute("href")]);
+    expect(menuLinks).toEqual([
+      ["Home", "/"],
+      ["About", "/about"],
+      ["Experience", "/#experience"],
+      ["Projects", "/#projects"],
+      ["Contact", "/#contact"],
+    ]);
+
+    await user.click(menu.querySelector('a[href="/#projects"]'));
+
+    expect(document.getElementById("mobile-menu")).toBeNull();
+    expect(button).toHaveAttribute("aria-expanded", "false");
+  });
+
+  it("closes the mobile menu on Escape and returns focus to the menu button", async () => {
+    const user = userEvent.setup();
+    render(<Navbar />);
+
+    const button = screen.getByRole("button", { name: "Menu" });
+    await user.click(button);
+    expect(document.getElementById("mobile-menu")).not.toBeNull();
+
+    await user.keyboard("{Escape}");
+
+    expect(document.getElementById("mobile-menu")).toBeNull();
+    expect(button).toHaveFocus();
   });
 
   it("disconnects its observers on unmount", () => {

@@ -6,6 +6,7 @@ import ViewCounter from "@/components/ViewCounter";
 import { findProjectBySlug } from "@/lib/api";
 import { primaryButton, tagPill } from "@/lib/styles";
 import { externalLinkProps } from "@/lib/site";
+import ProjectShowcase from "@/components/ProjectShowcase";
 
 async function getReadme(githubUrl) {
   try {
@@ -110,6 +111,8 @@ export default async function ProjectPage({ params }) {
             </a>
           )}
         </div>
+
+        <ProjectShowcase slug={slug} />
 
         <hr className="border-zinc-200 dark:border-zinc-800 mb-10" />
 
