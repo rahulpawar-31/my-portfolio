@@ -74,6 +74,72 @@ describe("Navbar", () => {
     section.remove();
   });
 
+  it("highlights Home only while no section is in view", () => {
+    const section = document.createElement("div");
+    section.id = "experience";
+    document.body.appendChild(section);
+
+    render(<Navbar />);
+    const home = screen.getByRole("link", { name: "Home" });
+    const experience = screen.getByRole("link", { name: "Experience" });
+
+    expect(home).toHaveClass(activeClass);
+    expect(experience).not.toHaveClass(activeClass);
+
+    act(() => observerCallbacks.get("experience")([{ isIntersecting: true }]));
+    expect(home).not.toHaveClass(activeClass);
+    expect(experience).toHaveClass(activeClass);
+
+    act(() => observerCallbacks.get("experience")([{ isIntersecting: false }]));
+    expect(home).toHaveClass(activeClass);
+    expect(experience).not.toHaveClass(activeClass);
+
+    section.remove();
+  });
+
+  it("highlights exactly one link when two sections are in view", () => {
+    const ids = ["experience", "projects"];
+    const els = ids.map((id) => {
+      const el = document.createElement("div");
+      el.id = id;
+      document.body.appendChild(el);
+      return el;
+    });
+
+    render(<Navbar />);
+    act(() => {
+      observerCallbacks.get("experience")([{ isIntersecting: true }]);
+      observerCallbacks.get("projects")([{ isIntersecting: true }]);
+    });
+
+    const active = screen.getAllByRole("link").filter((a) => a.classList.contains(activeClass));
+    expect(active.map((a) => a.textContent)).toEqual(["Experience"]);
+
+    act(() => observerCallbacks.get("experience")([{ isIntersecting: false }]));
+    expect(screen.getByRole("link", { name: "Projects" })).toHaveClass(activeClass);
+    expect(screen.getByRole("link", { name: "Experience" })).not.toHaveClass(activeClass);
+
+    els.forEach((el) => el.remove());
+  });
+
+  it("tracks sections again after navigating to the home page from another page", () => {
+    usePathname.mockReturnValue("/about");
+    const { rerender } = render(<Navbar />);
+    expect(observerCallbacks.has("experience")).toBe(false);
+
+    const section = document.createElement("div");
+    section.id = "experience";
+    document.body.appendChild(section);
+    usePathname.mockReturnValue("/");
+    rerender(<Navbar />);
+
+    act(() => observerCallbacks.get("experience")([{ isIntersecting: true }]));
+    expect(screen.getByRole("link", { name: "Experience" })).toHaveClass(activeClass);
+    expect(screen.getByRole("link", { name: "Home" })).not.toHaveClass(activeClass);
+
+    section.remove();
+  });
+
   it("ignores sections that are not intersecting", () => {
     const section = document.createElement("div");
     section.id = "contact";

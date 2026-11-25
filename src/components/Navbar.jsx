@@ -14,6 +14,8 @@ const links = [
   { href: "/#contact", label: "Contact", sectionId: "contact" },
 ];
 
+const sections = links.filter((l) => l.sectionId).map((l) => l.sectionId);
+
 function MenuIcon({ open }) {
   return (
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" aria-hidden="true" className="h-5 w-5">
@@ -31,12 +33,13 @@ export default function Navbar() {
   const { theme, setTheme } = useTheme();
   const mounted = useMounted();
   const scrolled = useScrolledPast(20);
-  const [activeSection, setActiveSection] = useState("");
+  // Sections currently in view, tagged with the page they were seen on so a
+  // stale value from another page is never used.
+  const [visible, setVisible] = useState({ path: null, ids: [] });
   const [menuOpen, setMenuOpen] = useState(false);
   const menuButtonRef = useRef(null);
 
   useEffect(() => {
-    const sections = ["experience", "projects", "contact"];
     const observers = [];
 
     sections.forEach((id) => {
@@ -44,7 +47,10 @@ export default function Navbar() {
       if (!el) return;
       const observer = new IntersectionObserver(
         ([entry]) => {
-          if (entry.isIntersecting) setActiveSection(id);
+          setVisible((prev) => {
+            const ids = prev.path === pathname ? prev.ids.filter((v) => v !== id) : [];
+            return { path: pathname, ids: entry.isIntersecting ? [...ids, id] : ids };
+          });
         },
         { threshold: 0.3 }
       );
@@ -55,7 +61,7 @@ export default function Navbar() {
     return () => {
       observers.forEach((o) => o.disconnect());
     };
-  }, []);
+  }, [pathname]);
 
   useEffect(() => {
     if (!menuOpen) return;
@@ -71,8 +77,15 @@ export default function Navbar() {
     return () => document.removeEventListener("keydown", onKeyDown);
   }, [menuOpen]);
 
-  const isActive = (href, sectionId) =>
-    pathname === href || (sectionId ? activeSection === sectionId : false);
+  // The topmost section in view wins: it is the one the visitor is reading.
+  const visibleIds = visible.path === pathname ? visible.ids : [];
+  const activeSection = sections.find((id) => visibleIds.includes(id)) ?? "";
+
+  const isActive = (href, sectionId) => {
+    if (sectionId) return activeSection === sectionId;
+    if (href === "/") return pathname === "/" && !activeSection;
+    return pathname === href;
+  };
 
   const navLink = (href, label, sectionId) => {
     const active = isActive(href, sectionId);
