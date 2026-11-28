@@ -6,6 +6,7 @@ import ViewCounter from "@/components/ViewCounter";
 import { findProjectBySlug } from "@/lib/api";
 import { primaryButton, tagPill } from "@/lib/styles";
 import { externalLinkProps } from "@/lib/site";
+import { FeatureExplanation } from "@/components/HowItWorks";
 import ProjectShowcase from "@/components/ProjectShowcase";
 
 async function getReadme(githubUrl) {
@@ -114,6 +115,8 @@ export default async function ProjectPage({ params }) {
 
         <ProjectShowcase slug={slug} />
 
+        <FeatureExplanation feature="views" className="mb-6" />
+        <FeatureExplanation feature="readme" className="mb-10" />
         <hr className="border-zinc-200 dark:border-zinc-800 mb-10" />
 
         {readme ? (

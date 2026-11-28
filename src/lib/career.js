@@ -1,3 +1,5 @@
+import { projectEvidence } from "@/lib/projectEvidence";
+
 // Career evidence shown on the portfolio: work experience, selected pull
 // requests, verified results, testimonials and project screenshots.
 //
@@ -45,4 +47,4 @@ export const testimonials = [];
 //   contribution: { built, hardestProblem, approach },
 // }
 // Put image files in public/screenshots/.
-export const projectShowcase = {};
+export const projectShowcase = projectEvidence;

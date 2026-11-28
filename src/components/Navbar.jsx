@@ -11,6 +11,8 @@ const links = [
   { href: "/about", label: "About" },
   { href: "/#experience", label: "Experience", sectionId: "experience" },
   { href: "/#projects", label: "Projects", sectionId: "projects" },
+  { href: "/#playground", label: "Playground", sectionId: "playground" },
+  { href: "/#notes", label: "Notes", sectionId: "notes" },
   { href: "/#contact", label: "Contact", sectionId: "contact" },
 ];
 
@@ -121,7 +123,7 @@ export default function Navbar() {
         </Link>
 
         <div className="flex items-center gap-3 md:gap-6">
-          <div className="hidden md:flex items-center gap-6">
+          <div className="hidden lg:flex items-center gap-6">
             {links.map(({ href, label, sectionId }) => (
               <Fragment key={href}>{navLink(href, label, sectionId)}</Fragment>
             ))}
@@ -146,7 +148,7 @@ export default function Navbar() {
             aria-expanded={menuOpen}
             aria-controls="mobile-menu"
             aria-label="Menu"
-            className="md:hidden w-10 h-10 flex items-center justify-center rounded-lg text-zinc-300 hover:text-white hover:bg-zinc-800 transition-colors"
+            className="lg:hidden w-10 h-10 flex items-center justify-center rounded-lg text-zinc-300 hover:text-white hover:bg-zinc-800 transition-colors"
           >
             <MenuIcon open={menuOpen} />
           </button>
@@ -154,7 +156,7 @@ export default function Navbar() {
       </div>
 
       {menuOpen && (
-        <div id="mobile-menu" className="md:hidden border-t border-white/5 bg-black">
+        <div id="mobile-menu" className="lg:hidden border-t border-white/5 bg-black">
           <ul className="max-w-6xl mx-auto px-6 py-2">
             {links.map(({ href, label, sectionId }) => {
               const active = isActive(href, sectionId);

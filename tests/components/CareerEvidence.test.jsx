@@ -65,8 +65,16 @@ describe("Testimonials", () => {
 
 describe("ProjectShowcase", () => {
   it("renders nothing for a project without screenshots or contribution notes", () => {
-    const { container } = render(<ProjectShowcase slug="car-rental" />);
+    const { container } = render(<ProjectShowcase slug="unknown-project" />);
     expect(container).toBeEmptyDOMElement();
+  });
+
+  it("provides a source-backed car-rental case study and a working playground link", () => {
+    render(<ProjectShowcase slug="car-rental" />);
+    expect(screen.getByRole("heading", { name: "Keeping a booking quote consistent" })).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "Still to improve" })).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: "Try the quote playground" })).toHaveAttribute("href", "/#playground");
+    expect(screen.getByRole("link", { name: /read the pricing implementation/i })).toHaveAttribute("href", "https://github.com/rahulpawar-31/car-rental/blob/main/api/src/services/booking.quote.js");
   });
 
   it("renders screenshots and only the filled contribution fields", () => {

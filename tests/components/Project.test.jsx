@@ -42,7 +42,7 @@ describe("Project list", () => {
       "href",
       "/projects/portfolio"
     );
-    expect(screen.getByRole("link", { name: "GitHub" })).toHaveAttribute(
+    expect(screen.getByRole("link", { name: "GitHub: Portfolio" })).toHaveAttribute(
       "href",
       baseProject.githubUrl
     );
@@ -52,16 +52,16 @@ describe("Project list", () => {
     await renderProjects();
 
     for (const tech of ["Next.js", "Prisma", "Tailwind", "Neon"]) {
-      expect(screen.getByText(tech)).toBeInTheDocument();
+      expect(screen.getByText(tech, { selector: "span" })).toBeInTheDocument();
     }
-    expect(screen.queryByText("Vercel")).not.toBeInTheDocument();
+    expect(screen.queryByText("Vercel", { selector: "span" })).not.toBeInTheDocument();
   });
 
   it("marks deployed projects as live", async () => {
     await renderProjects();
 
     expect(screen.getByText("Live", { selector: "span" })).toBeInTheDocument();
-    expect(screen.getByRole("link", { name: "Live" })).toHaveAttribute(
+    expect(screen.getByRole("link", { name: "Live: Portfolio" })).toHaveAttribute(
       "href",
       baseProject.liveUrl
     );

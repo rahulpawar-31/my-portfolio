@@ -1,5 +1,6 @@
 import Image from "next/image";
 import { projectShowcase } from "@/lib/career";
+import CaseStudy from "@/components/CaseStudy";
 
 const contributionFields = [
   { key: "built", label: "What I built" },
@@ -12,7 +13,7 @@ export default function ProjectShowcase({ slug, showcase = projectShowcase[slug]
   const contribution = showcase?.contribution ?? {};
   const filledFields = contributionFields.filter(({ key }) => contribution[key]);
 
-  if (!screenshots.length && !filledFields.length) return null;
+  if (!screenshots.length && !filledFields.length && !showcase?.caseStudy) return null;
 
   return (
     <div className="mb-10 space-y-10">
@@ -39,6 +40,8 @@ export default function ProjectShowcase({ slug, showcase = projectShowcase[slug]
           </div>
         </section>
       )}
+
+      <CaseStudy study={showcase?.caseStudy} />
 
       {filledFields.length > 0 && (
         <section
