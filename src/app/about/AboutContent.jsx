@@ -8,6 +8,7 @@ import {
   fadeInX,
 } from "@/lib/motion";
 import { primaryButton, secondaryButton, tagPill } from "@/lib/styles";
+import Testimonials from "@/components/Testimonials";
 
 const techStack = [
   "Next.js", "React", "TypeScript", "Node.js",
@@ -147,6 +148,8 @@ export default function AboutContent() {
             ))}
           </div>
         </motion.div>
+
+        <Testimonials className="mt-4 mb-10" />
 
         <motion.div
           {...fadeInUp(0.75)}

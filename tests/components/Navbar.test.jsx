@@ -44,6 +44,7 @@ describe("Navbar", () => {
 
     expect(screen.getByRole("link", { name: "Home" })).toHaveAttribute("href", "/");
     expect(screen.getByRole("link", { name: "About" })).toHaveAttribute("href", "/about");
+    expect(screen.getByRole("link", { name: "Experience" })).toHaveAttribute("href", "/#experience");
     expect(screen.getByRole("link", { name: "Projects" })).toHaveAttribute("href", "/#projects");
     expect(screen.getByRole("link", { name: "Contact" })).toHaveAttribute("href", "/#contact");
   });
@@ -69,6 +70,72 @@ describe("Navbar", () => {
     });
 
     expect(screen.getByRole("link", { name: "Projects" })).toHaveClass(activeClass);
+
+    section.remove();
+  });
+
+  it("highlights Home only while no section is in view", () => {
+    const section = document.createElement("div");
+    section.id = "experience";
+    document.body.appendChild(section);
+
+    render(<Navbar />);
+    const home = screen.getByRole("link", { name: "Home" });
+    const experience = screen.getByRole("link", { name: "Experience" });
+
+    expect(home).toHaveClass(activeClass);
+    expect(experience).not.toHaveClass(activeClass);
+
+    act(() => observerCallbacks.get("experience")([{ isIntersecting: true }]));
+    expect(home).not.toHaveClass(activeClass);
+    expect(experience).toHaveClass(activeClass);
+
+    act(() => observerCallbacks.get("experience")([{ isIntersecting: false }]));
+    expect(home).toHaveClass(activeClass);
+    expect(experience).not.toHaveClass(activeClass);
+
+    section.remove();
+  });
+
+  it("highlights exactly one link when two sections are in view", () => {
+    const ids = ["experience", "projects"];
+    const els = ids.map((id) => {
+      const el = document.createElement("div");
+      el.id = id;
+      document.body.appendChild(el);
+      return el;
+    });
+
+    render(<Navbar />);
+    act(() => {
+      observerCallbacks.get("experience")([{ isIntersecting: true }]);
+      observerCallbacks.get("projects")([{ isIntersecting: true }]);
+    });
+
+    const active = screen.getAllByRole("link").filter((a) => a.classList.contains(activeClass));
+    expect(active.map((a) => a.textContent)).toEqual(["Experience"]);
+
+    act(() => observerCallbacks.get("experience")([{ isIntersecting: false }]));
+    expect(screen.getByRole("link", { name: "Projects" })).toHaveClass(activeClass);
+    expect(screen.getByRole("link", { name: "Experience" })).not.toHaveClass(activeClass);
+
+    els.forEach((el) => el.remove());
+  });
+
+  it("tracks sections again after navigating to the home page from another page", () => {
+    usePathname.mockReturnValue("/about");
+    const { rerender } = render(<Navbar />);
+    expect(observerCallbacks.has("experience")).toBe(false);
+
+    const section = document.createElement("div");
+    section.id = "experience";
+    document.body.appendChild(section);
+    usePathname.mockReturnValue("/");
+    rerender(<Navbar />);
+
+    act(() => observerCallbacks.get("experience")([{ isIntersecting: true }]));
+    expect(screen.getByRole("link", { name: "Experience" })).toHaveClass(activeClass);
+    expect(screen.getByRole("link", { name: "Home" })).not.toHaveClass(activeClass);
 
     section.remove();
   });
@@ -126,6 +193,47 @@ describe("Navbar", () => {
     await userEvent.click(toggle);
 
     expect(setTheme).toHaveBeenCalledWith("dark");
+  });
+
+  it("opens a mobile menu listing every link and closes it when a link is tapped", async () => {
+    const user = userEvent.setup();
+    render(<Navbar />);
+
+    const button = screen.getByRole("button", { name: "Menu" });
+    expect(button).toHaveAttribute("aria-expanded", "false");
+    expect(document.getElementById("mobile-menu")).toBeNull();
+
+    await user.click(button);
+
+    expect(button).toHaveAttribute("aria-expanded", "true");
+    const menu = document.getElementById("mobile-menu");
+    const menuLinks = [...menu.querySelectorAll("a")].map((a) => [a.textContent, a.getAttribute("href")]);
+    expect(menuLinks).toEqual([
+      ["Home", "/"],
+      ["About", "/about"],
+      ["Experience", "/#experience"],
+      ["Projects", "/#projects"],
+      ["Contact", "/#contact"],
+    ]);
+
+    await user.click(menu.querySelector('a[href="/#projects"]'));
+
+    expect(document.getElementById("mobile-menu")).toBeNull();
+    expect(button).toHaveAttribute("aria-expanded", "false");
+  });
+
+  it("closes the mobile menu on Escape and returns focus to the menu button", async () => {
+    const user = userEvent.setup();
+    render(<Navbar />);
+
+    const button = screen.getByRole("button", { name: "Menu" });
+    await user.click(button);
+    expect(document.getElementById("mobile-menu")).not.toBeNull();
+
+    await user.keyboard("{Escape}");
+
+    expect(document.getElementById("mobile-menu")).toBeNull();
+    expect(button).toHaveFocus();
   });
 
   it("disconnects its observers on unmount", () => {

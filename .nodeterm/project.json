@@ -1,0 +1,36 @@
+{
+  "version": 1,
+  "rev": 31,
+  "savedAt": "2026-11-25T09:28:30.399Z",
+  "id": "project-16tw1hu",
+  "name": "my-portfolio",
+  "color": "#ff9f0a",
+  "viewport": {
+    "x": -228,
+    "y": -199.8450927734375,
+    "zoom": 1
+  },
+  "nodes": [
+    {
+      "id": "term-mwvx891g-0e9e5720",
+      "kind": "terminal",
+      "position": {
+        "x": 308,
+        "y": 279.8450927734375
+      },
+      "size": {
+        "width": 640,
+        "height": 440
+      },
+      "title": "Codex",
+      "titleAuto": true,
+      "color": "#10a37f",
+      "group": null,
+      "tags": [],
+      "cwd": ".",
+      "agentId": "codex"
+    }
+  ],
+  "bridges": [],
+  "ropes": []
+}
