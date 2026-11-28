@@ -1,10 +1,27 @@
 // @vitest-environment jsdom
-import { render, screen } from "@testing-library/react";
+import { render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, expect, it, vi } from "vitest";
 import BookingPlayground from "@/components/BookingPlayground";
 
 describe("Booking playground", () => {
+  it("keeps a fractional discount and total consistent in the displayed breakdown", async () => {
+    const user = userEvent.setup();
+    const { container } = render(<BookingPlayground />);
+    await user.click(screen.getByRole("radio", { name: "Hourly" }));
+    const duration = screen.getByLabelText("Hours");
+    await user.clear(duration);
+    await user.type(duration, "1");
+    await user.selectOptions(screen.getByLabelText("Coupon"), "welcome10");
+
+    const breakdown = container.querySelector("dl");
+    expect(within(breakdown).getByText("-₹22.50")).toBeInTheDocument();
+    expect(screen.getByTestId("quote-total")).toHaveTextContent("₹1,738.50");
+    const displayedAmounts = [...breakdown.querySelectorAll("dd")].map((item) => Number(item.textContent.replace(/[₹,]/g, "")));
+    const total = displayedAmounts.pop();
+    expect(displayedAmounts.reduce((sum, amount) => sum + amount, 0)).toBe(total);
+  });
+
   it("recalculates as controls change, caps discounts, and resets without a network request", async () => {
     const user = userEvent.setup();
     const request = vi.spyOn(globalThis, "fetch");

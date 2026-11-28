@@ -54,7 +54,9 @@ export default function Navbar() {
             return { path: pathname, ids: entry.isIntersecting ? [...ids, id] : ids };
           });
         },
-        { threshold: 0.3 }
+        // A tall project gallery can never fit 30% of its height on a phone.
+        // Track any intersection below the sticky header instead.
+        { threshold: 0, rootMargin: "-96px 0px 0px 0px" }
       );
       observer.observe(el);
       observers.push(observer);

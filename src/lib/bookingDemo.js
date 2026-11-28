@@ -28,5 +28,7 @@ export function calculateDemoQuote({ vehicleId, rentalType, duration, couponId }
 }
 
 export const formatRupees = (amount) => new Intl.NumberFormat("en-IN", {
-  style: "currency", currency: "INR", maximumFractionDigits: 0,
+  style: "currency", currency: "INR",
+  minimumFractionDigits: Number.isInteger(amount) ? 0 : 2,
+  maximumFractionDigits: 2,
 }).format(amount);
