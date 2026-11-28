@@ -11,6 +11,9 @@ vi.mock("@/components/Project", () => stub("projects"));
 vi.mock("@/components/GitHubActivity", () => stub("github"));
 vi.mock("@/components/Contact", () => stub("contact"));
 vi.mock("@/components/Footer", () => stub("footer"));
+vi.mock("@/components/RecruiterSummary", () => stub("quick-view"));
+vi.mock("@/components/BookingPlayground", () => stub("playground"));
+vi.mock("@/components/EngineeringNotes", () => stub("notes"));
 
 const { default: Home, revalidate } = await import("@/app/page");
 
@@ -27,9 +30,12 @@ describe("Home page", () => {
     }
     expect([...container.children].map((el) => el.dataset.testid)).toEqual([
       "hero",
+      "quick-view",
       "skills",
       "experience",
       "projects",
+      "playground",
+      "notes",
       "github",
       "contact",
       "footer",

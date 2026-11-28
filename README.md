@@ -33,6 +33,12 @@ Most developer portfolios are just static pages. I built mine differently — wi
 - Auto-deploy on Vercel with postinstall prisma generate
 - View counter on project pages — live data from Neon DB
 - README fetched live from GitHub API on project detail pages
+- Opt-in "How this works" mode with expandable feature explanations and links to source code; stays enabled while navigating within the site
+- Real public-demo screenshots, category and technology filters, and source-backed engineering case studies
+- Interactive car-rental pricing playground with sample rates, coupons, validation, and a live quote breakdown
+- Recruiter quick view and expandable engineering notes
+
+Project evidence is maintained in `src/lib/projectEvidence.js`; screenshots live in `public/screenshots/`. Keep new case studies tied to verifiable source and label sample data clearly. The pricing playground runs entirely in the browser and never creates a booking or payment. Internship contributions and testimonials remain hidden until real content is provided in `src/lib/career.js`.
 
 ---
 

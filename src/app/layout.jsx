@@ -6,6 +6,7 @@ import Navbar from "@/components/Navbar";
 import CustomCursor from "@/components/CustomCursor";
 import PageLoader from "@/components/PageLoader";
 import BackToTop from "@/components/BackToTop";
+import { HowItWorksProvider, HowItWorksToggle } from "@/components/HowItWorks";
 import { SITE_URL, SITE_NAME, AUTHOR_NAME, socials } from "@/lib/site";
 import "./globals.css";
 
@@ -64,11 +65,14 @@ export default function RootLayout({ children }) {
         />
         <ThemeProvider>
           <MotionConfig reducedMotion="user">
-            <PageLoader />
-            <CustomCursor />
-            <Navbar />
-            {children}
-            <BackToTop />
+            <HowItWorksProvider>
+              <PageLoader />
+              <CustomCursor />
+              <Navbar />
+              <HowItWorksToggle />
+              {children}
+              <BackToTop />
+            </HowItWorksProvider>
           </MotionConfig>
         </ThemeProvider>
         <SpeedInsights />

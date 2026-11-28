@@ -213,6 +213,8 @@ describe("Navbar", () => {
       ["About", "/about"],
       ["Experience", "/#experience"],
       ["Projects", "/#projects"],
+      ["Playground", "/#playground"],
+      ["Notes", "/#notes"],
       ["Contact", "/#contact"],
     ]);
 

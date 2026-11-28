@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import SectionHeading from "@/components/SectionHeading";
 import { fadeInUpOnScroll, fadeInXOnScroll } from "@/lib/motion";
 import { externalLinkProps, socials, contactEmail } from "@/lib/site";
+import { FeatureExplanation } from "@/components/HowItWorks";
 
 export default function Contact() {
   const [formData, setFormData] = useState({ name: "", email: "", message: "", company: "" });
@@ -57,6 +58,7 @@ export default function Contact() {
           />
         </motion.div>
 
+        <FeatureExplanation feature="contact" className="mb-8" />
         <div className="grid grid-cols-1 md:grid-cols-5 gap-12 items-start">
           <motion.div
             className="md:col-span-2 space-y-6"

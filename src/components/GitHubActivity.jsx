@@ -7,6 +7,7 @@ import SectionHeading from "@/components/SectionHeading";
 import { GitHubIcon } from "@/components/icons";
 import { externalLinkProps, socials } from "@/lib/site";
 import { useMounted } from "@/hooks/useMounted";
+import { FeatureExplanation } from "@/components/HowItWorks";
 
 export default function GitHubActivity() {
   const { resolvedTheme } = useTheme();
@@ -32,6 +33,7 @@ export default function GitHubActivity() {
           />
         </div>
 
+        <FeatureExplanation feature="activity" className="mb-8" />
         <div className="rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-6 md:p-8 overflow-x-auto">
           {mounted && (
             <GitHubCalendar
